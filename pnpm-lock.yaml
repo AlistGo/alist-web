@@ -16,7 +16,7 @@ importers:
         version: 2.1.1
       '@hope-ui/solid':
         specifier: 0.6.7
-        version: 0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12)
+        version: 0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))
       '@monaco-editor/loader':
         specifier: ^1.4.0
         version: 1.4.0(monaco-editor@0.50.0)
@@ -103,7 +103,7 @@ importers:
         version: 0.2.0
       solid-contextmenu:
         specifier: 0.0.2
-        version: 0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12)
+        version: 0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))
       solid-icons:
         specifier: ^1.0.1
         version: 1.0.1(solid-js@1.4.8)
@@ -140,10 +140,10 @@ importers:
         version: 0.2.0
       '@types/streamsaver':
         specifier: ^2.0.1
-        version: 2.0.1
+        version: 2.0.4
       '@vitejs/plugin-legacy':
         specifier: ^2.0.1
-        version: 2.0.1(terser@5.14.2)(vite@3.0.8)
+        version: 2.0.1(terser@5.14.2)(vite@3.0.8(terser@5.14.2))
       husky:
         specifier: ^8.0.2
         version: 8.0.2
@@ -170,7 +170,7 @@ importers:
         version: 0.4.4
       vite-plugin-solid:
         specifier: ^2.3.0
-        version: 2.3.0(solid-js@1.4.8)(vite@3.0.8)
+        version: 2.3.0(solid-js@1.4.8)(vite@3.0.8(terser@5.14.2))
 
 packages:
 
@@ -525,8 +525,8 @@ packages:
   '@types/sizzle@2.3.3':
     resolution: {integrity: sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==}
 
-  '@types/streamsaver@2.0.1':
-    resolution: {integrity: sha512-I49NtT8w6syBI3Zg3ixCyygTHoTVMY0z2TMRcTgccdIsVd2MwlKk7ITLHLsJtgchUHcOd7QEARG9h0ifcA6l2Q==}
+  '@types/streamsaver@2.0.4':
+    resolution: {integrity: sha512-XxpGYIaBP+2NgZ5+4YeG7hI3wYAyOX8QB92xlPpNvStIAvlniml1th+D0bes1lUZz52IWkPlXMf88wy8NzFkbA==}
 
   '@types/unist@2.0.6':
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
@@ -2189,7 +2189,7 @@ snapshots:
 
   '@github/webauthn-json@2.1.1': {}
 
-  '@hope-ui/solid@0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12)':
+  '@hope-ui/solid@0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))':
     dependencies:
       '@floating-ui/dom': 0.4.4
       '@stitches/core': 1.2.8
@@ -2378,7 +2378,7 @@ snapshots:
 
   '@types/sizzle@2.3.3': {}
 
-  '@types/streamsaver@2.0.1': {}
+  '@types/streamsaver@2.0.4': {}
 
   '@types/unist@2.0.6': {}
 
@@ -2386,7 +2386,7 @@ snapshots:
 
   '@viselect/vanilla@3.5.0': {}
 
-  '@vitejs/plugin-legacy@2.0.1(terser@5.14.2)(vite@3.0.8)':
+  '@vitejs/plugin-legacy@2.0.1(terser@5.14.2)(vite@3.0.8(terser@5.14.2))':
     dependencies:
       '@babel/standalone': 7.18.12
       core-js: 3.24.1
@@ -3658,7 +3658,7 @@ snapshots:
 
   smoothscroll@0.4.0: {}
 
-  solid-contextmenu@0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12):
+  solid-contextmenu@0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8)):
     dependencies:
       clsx: 1.2.1
       mitt: 3.0.0
@@ -3879,7 +3879,7 @@ snapshots:
     dependencies:
       node-html-parser: 5.4.1
 
-  vite-plugin-solid@2.3.0(solid-js@1.4.8)(vite@3.0.8):
+  vite-plugin-solid@2.3.0(solid-js@1.4.8)(vite@3.0.8(terser@5.14.2)):
     dependencies:
       '@babel/core': 7.18.10
       '@babel/preset-typescript': 7.18.6(@babel/core@7.18.10)
@@ -3897,9 +3897,9 @@ snapshots:
       postcss: 8.4.16
       resolve: 1.22.1
       rollup: 2.77.3
-      terser: 5.14.2
     optionalDependencies:
       fsevents: 2.3.3
+      terser: 5.14.2
 
   web-namespaces@2.0.1: {}
 
