@@ -16,7 +16,7 @@ importers:
         version: 2.1.1
       '@hope-ui/solid':
         specifier: 0.6.7
-        version: 0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12)
+        version: 0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))
       '@monaco-editor/loader':
         specifier: ^1.4.0
         version: 1.4.0(monaco-editor@0.50.0)
@@ -103,7 +103,7 @@ importers:
         version: 0.2.0
       solid-contextmenu:
         specifier: 0.0.2
-        version: 0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12)
+        version: 0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))
       solid-icons:
         specifier: ^1.0.1
         version: 1.0.1(solid-js@1.4.8)
@@ -143,7 +143,7 @@ importers:
         version: 2.0.1
       '@vitejs/plugin-legacy':
         specifier: ^2.0.1
-        version: 2.0.1(terser@5.14.2)(vite@3.0.8)
+        version: 2.0.1(terser@5.14.2)(vite@3.0.8(terser@5.14.2))
       husky:
         specifier: ^8.0.2
         version: 8.0.2
@@ -160,8 +160,8 @@ importers:
         specifier: ^5.14.2
         version: 5.14.2
       typescript:
-        specifier: ^4.7.4
-        version: 4.7.4
+        specifier: ^5.0.0
+        version: 5.5.4
       vite:
         specifier: ^3.0.8
         version: 3.0.8(terser@5.14.2)
@@ -170,7 +170,7 @@ importers:
         version: 0.4.4
       vite-plugin-solid:
         specifier: ^2.3.0
-        version: 2.3.0(solid-js@1.4.8)(vite@3.0.8)
+        version: 2.3.0(solid-js@1.4.8)(vite@3.0.8(terser@5.14.2))
 
 packages:
 
@@ -1816,9 +1816,9 @@ packages:
   typescript-natural-sort@0.7.2:
     resolution: {integrity: sha512-C8gaSIZySgJ+PchvslIJ6j5wcUIKPsGMzUm1gbFSmKjk+YkXTYPLlFc8UJHp2mvUadF80pWPgsxsAOPIP3TZ4g==}
 
-  typescript@4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
-    engines: {node: '>=4.2.0'}
+  typescript@5.5.4:
+    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   unified@10.1.2:
@@ -2189,7 +2189,7 @@ snapshots:
 
   '@github/webauthn-json@2.1.1': {}
 
-  '@hope-ui/solid@0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12)':
+  '@hope-ui/solid@0.6.7(@stitches/core@1.2.8)(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8))':
     dependencies:
       '@floating-ui/dom': 0.4.4
       '@stitches/core': 1.2.8
@@ -2386,7 +2386,7 @@ snapshots:
 
   '@viselect/vanilla@3.5.0': {}
 
-  '@vitejs/plugin-legacy@2.0.1(terser@5.14.2)(vite@3.0.8)':
+  '@vitejs/plugin-legacy@2.0.1(terser@5.14.2)(vite@3.0.8(terser@5.14.2))':
     dependencies:
       '@babel/standalone': 7.18.12
       core-js: 3.24.1
@@ -3658,7 +3658,7 @@ snapshots:
 
   smoothscroll@0.4.0: {}
 
-  solid-contextmenu@0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12):
+  solid-contextmenu@0.0.2(solid-js@1.4.8)(solid-transition-group@0.0.12(solid-js@1.4.8)):
     dependencies:
       clsx: 1.2.1
       mitt: 3.0.0
@@ -3794,7 +3794,7 @@ snapshots:
 
   typescript-natural-sort@0.7.2: {}
 
-  typescript@4.7.4: {}
+  typescript@5.5.4: {}
 
   unified@10.1.2:
     dependencies:
@@ -3879,7 +3879,7 @@ snapshots:
     dependencies:
       node-html-parser: 5.4.1
 
-  vite-plugin-solid@2.3.0(solid-js@1.4.8)(vite@3.0.8):
+  vite-plugin-solid@2.3.0(solid-js@1.4.8)(vite@3.0.8(terser@5.14.2)):
     dependencies:
       '@babel/core': 7.18.10
       '@babel/preset-typescript': 7.18.6(@babel/core@7.18.10)
@@ -3897,9 +3897,9 @@ snapshots:
       postcss: 8.4.16
       resolve: 1.22.1
       rollup: 2.77.3
-      terser: 5.14.2
     optionalDependencies:
       fsevents: 2.3.3
+      terser: 5.14.2
 
   web-namespaces@2.0.1: {}
 
