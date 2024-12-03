@@ -1,9 +1,12 @@
 import { Box } from "@hope-ui/solid"
 import { SelectWrapper } from "./Base"
+import chardet from "chardet"
+import { createEffect } from "solid-js"
 
 export function EncodingSelect(props: {
   encoding: string
   setEncoding: (encoding: string) => void
+  referenceText?: string | ArrayBuffer
 }) {
   const encodingLabels = [
     "utf-8",
@@ -48,6 +51,25 @@ export function EncodingSelect(props: {
     "x-user-defined",
     "iso-2022-cn",
   ]
+
+  createEffect(() => {
+    if (props.referenceText) {
+      let buffer: Uint8Array
+      if (typeof props.referenceText === "string") {
+        buffer = new TextEncoder().encode(props.referenceText)
+      } else {
+        buffer = new Uint8Array(props.referenceText)
+      }
+      for (let encoding of chardet.analyse(buffer)) {
+        const encodingLabel = encoding.name.toLowerCase()
+        if (encodingLabels.includes(encodingLabel)) {
+          props.setEncoding(encodingLabel)
+          return
+        }
+      }
+    }
+  })
+
   return (
     <Box
       pos="absolute"

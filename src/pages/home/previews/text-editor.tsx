@@ -45,7 +45,11 @@ function Editor(props: { data?: string | ArrayBuffer; contentType?: string }) {
   return (
     <VStack w="$full" alignItems="start" spacing="$2" pos="relative">
       <Show when={!isString}>
-        <EncodingSelect encoding={encoding()} setEncoding={setEncoding} />
+        <EncodingSelect
+          encoding={encoding()}
+          setEncoding={setEncoding}
+          referenceText={props.data}
+        />
       </Show>
       <MonacoEditorLoader
         value={text(encoding())}

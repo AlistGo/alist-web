@@ -233,7 +233,11 @@ export function Markdown(props: {
         />
       </Show>
       <Show when={!isString}>
-        <EncodingSelect encoding={encoding()} setEncoding={setEncoding} />
+        <EncodingSelect
+          encoding={encoding()}
+          setEncoding={setEncoding}
+          referenceText={props.children}
+        />
       </Show>
       <MarkdownToc disabled={!props.toc} markdownRef={markdownRef()!} />
     </Box>

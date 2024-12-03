@@ -16,7 +16,11 @@ function Html(props: { children?: string | ArrayBuffer }) {
         srcdoc={text(encoding())}
       />
       <Show when={!isString}>
-        <EncodingSelect encoding={encoding()} setEncoding={setEncoding} />
+        <EncodingSelect
+          encoding={encoding()}
+          setEncoding={setEncoding}
+          referenceText={props.children}
+        />
       </Show>
     </BoxWithFullScreen>
   )
