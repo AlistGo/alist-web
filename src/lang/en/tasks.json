@@ -19,5 +19,36 @@
     "7": "Failed",
     "8": "WaitingRetry",
     "9": "BeforeRetry"
-  }
+  },
+  "retry_selected": "Retry Selected",
+  "cancel_selected": "Cancel Selected",
+  "delete_selected": "Delete Selected",
+  "filter": "Filter",
+  "expand": "Expand",
+  "fold": "Fold",
+  "expand_all": "Expand All",
+  "fold_all": "Fold All",
+  "attr": {
+    "name": "Name",
+    "creator": "Creator",
+    "state": "State",
+    "progress": "Progress",
+    "operation": "Operation",
+    "copy": {
+      "src": "Source Path",
+      "dst": "Destination Path"
+    },
+    "upload": {
+      "path": "Path"
+    },
+    "offline_download": {
+      "url": "URL",
+      "path": "Destination Path",
+      "transfer_src": "Source Path",
+      "transfer_dst": "Destination Path"
+    },
+    "status": "Status",
+    "err": "Error"
+  },
+  "show_only_mine": "Show only my tasks"
 }

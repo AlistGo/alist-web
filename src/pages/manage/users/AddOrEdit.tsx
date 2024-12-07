@@ -14,6 +14,7 @@ import { handleResp, notify, r } from "~/utils"
 import { PEmptyResp, PResp, User, UserMethods, UserPermissions } from "~/types"
 import { createStore } from "solid-js/store"
 import { For, Show } from "solid-js"
+import { me, setMe } from "~/store"
 
 const Permission = (props: {
   can: boolean
@@ -148,8 +149,10 @@ const AddOrEdit = () => {
           onClick={async () => {
             const resp = await ok()
             // TODO maybe can use handleRespWithNotifySuccess
-            handleResp(resp, () => {
+            handleResp(resp, async () => {
               notify.success(t("global.save_success"))
+              if (user.username === me().username)
+                handleResp(await r.get("/me"), setMe)
               back()
             })
           }}
