@@ -4,7 +4,7 @@ import { Paginator } from "~/components"
 import { useFetch, useT } from "~/hooks"
 import { PEmptyResp, PResp, TaskInfo } from "~/types"
 import { handleResp, r } from "~/utils"
-import { Task } from "./Task"
+import { Task, TaskStateEnum } from "./Task"
 
 export interface TasksProps {
   type: string
@@ -17,24 +17,23 @@ export const Tasks = (props: TasksProps) => {
     (): PResp<TaskInfo[]> => r.get(`/task/${props.type}/${props.done}`),
   )
   const [tasks, setTasks] = createSignal<TaskInfo[]>([])
+  let compareFn: (a: TaskInfo, b: TaskInfo) => number
   const refresh = async () => {
     const resp = await get()
-    handleResp(resp, (data) =>
-      setTasks(
-        data?.sort((a, b) => {
-          if (a.id > b.id) {
-            return 1
-          }
-          return -1
-        }) ?? [],
-      ),
-    )
+    handleResp(resp, (data) => setTasks(data?.sort(compareFn) ?? []))
   }
-  refresh()
   if (props.done === "undone") {
+    compareFn = (a, b) => {
+      if (a.state === b.state) return a.id > b.id ? 1 : -1
+      if (a.state == TaskStateEnum.Pending) return 1
+      if (b.state == TaskStateEnum.Pending) return -1
+      return a.state > b.state ? 1 : -1
+    }
+
     const interval = setInterval(refresh, 2000)
     onCleanup(() => clearInterval(interval))
-  }
+  } else compareFn = (a, b) => (a.id > b.id ? 1 : -1)
+  refresh()
   const [clearDoneLoading, clearDone] = useFetch(
     (): PEmptyResp => r.post(`/task/${props.type}/clear_done`),
   )
