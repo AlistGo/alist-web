@@ -184,6 +184,10 @@ export function Markdown(props: {
     content = content.replace(/!\[.*?\]\((.*?)\)/g, (match) => {
       const name = match.match(/!\[(.*?)\]\(.*?\)/)![1]
       let url = match.match(/!\[.*?\]\((.*?)\)/)![1]
+      // 检查是否为 base64 编码的图片
+      if (url.startsWith("data:image/")) {
+        return match // 如果是 base64 编码的图片，直接返回原标签
+      }
       if (
         url.startsWith("http://") ||
         url.startsWith("https://") ||
