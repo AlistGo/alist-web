@@ -104,5 +104,12 @@
   "version": "Version",
   "video_autoplay": "Video autoplay",
   "video_types": "Video types",
-  "webauthn_login_enabled": "Webauthn login enabled"
+  "webauthn_login_enabled": "Webauthn login enabled",
+  "ftp_public_host": "Public IP/Host",
+  "ftp_pasv_port_map": "Passive transfer port mapping",
+  "ftp_proxy_user_agent": "HTTP proxy user agent",
+  "ftp_mandatory_tls": "Enable mandatory TLS",
+  "ftp_implicit_tls": "Enable implicit TLS (implies mandatory TLS)",
+  "ftp_tls_private_key_path": "Path to TLS private key file",
+  "ftp_tls_public_cert_path": "Path to TLS certificate file"
 }

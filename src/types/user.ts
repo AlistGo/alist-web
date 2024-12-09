@@ -27,14 +27,18 @@ export const UserPermissions = [
   "delete",
   "webdav_read",
   "webdav_manage",
+  "ftp_read",
+  "ftp_manage",
 ] as const
 
 export const UserMethods = {
   is_guest: (user: User) => user.role === UserRole.GUEST,
   is_admin: (user: User) => user.role === UserRole.ADMIN,
   is_general: (user: User) => user.role === UserRole.GENERAL,
-  can: (user: User, permission: number) =>
-    UserMethods.is_admin(user) || ((user.permission >> permission) & 1) == 1,
+  can: (user: User, permission: number) => {
+    let adminPrivilege = UserMethods.is_admin(user) && permission < 10
+    return adminPrivilege || ((user.permission >> permission) & 1) == 1
+  },
   // can_see_hides: (user: User) =>
   //   UserMethods.is_admin(user) || (user.permission & 1) == 1,
   // can_access_without_password: (user: User) =>

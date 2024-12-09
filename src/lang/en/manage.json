@@ -22,7 +22,8 @@
     "docs": "Documentation",
     "offline_download": "Offline Download",
     "ldap": "LDAP",
-    "s3": "S3"
+    "s3": "S3",
+    "ftp": "FTP"
   },
   "title": "AList Manage",
   "not_admin": "You are not admin user, please login with admin account.",
