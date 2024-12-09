@@ -15,7 +15,7 @@ import { PEmptyResp, TaskInfo } from "~/types"
 import { handleResp, notify, r } from "~/utils"
 import { TasksProps } from "./Tasks"
 
-enum TaskStateEnum {
+export enum TaskStateEnum {
   Pending,
   Running,
   Succeeded,

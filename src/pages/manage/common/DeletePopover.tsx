@@ -24,7 +24,7 @@ export const DeletePopover = (props: DeletePopoverProps) => {
           <PopoverTrigger as={Button} colorScheme="danger">
             {t("global.delete")}
           </PopoverTrigger>
-          <PopoverContent>
+          <PopoverContent rounded="$lg">
             <PopoverArrow />
             <PopoverHeader>
               {t("global.delete_confirm", {
