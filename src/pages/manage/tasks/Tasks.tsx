@@ -23,7 +23,7 @@ import { Paginator } from "~/components"
 import { useFetch, useT } from "~/hooks"
 import { PEmptyResp, PResp, TaskInfo } from "~/types"
 import { handleResp, notify, r } from "~/utils"
-import { TaskCol, cols, Task, TaskOrderBy } from "./Task"
+import { TaskCol, cols, Task, TaskOrderBy, TaskLocal } from "./Task"
 import { me } from "~/store"
 
 export interface TaskNameAnalyzer {
@@ -40,16 +40,27 @@ export interface TasksProps {
 }
 
 export interface TaskViewAttribute {
-  selected: boolean
-  expanded: boolean
+  curFetchTime: number
+  prevFetchTime?: number
+  prevProgress?: number
 }
+
+export interface TaskLocalContainer {
+  local: TaskLocal
+}
+
+export interface TaskLocalSetter {
+  setLocal: (l: TaskLocal) => void
+}
+
+export type TaskAttribute = TaskInfo & TaskViewAttribute & TaskLocalContainer
 
 export const Tasks = (props: TasksProps) => {
   const t = useT()
   const [loading, get] = useFetch(
     (): PResp<TaskInfo[]> => r.get(`/task/${props.type}/${props.done}`),
   )
-  const [tasks, setTasks] = createSignal<(TaskInfo & TaskViewAttribute)[]>([])
+  const [tasks, setTasks] = createSignal<TaskAttribute[]>([])
   const [orderBy, setOrderBy] = createSignal<TaskOrderBy>("name")
   const [orderReverse, setOrderReverse] = createSignal(false)
   const sorter: Record<TaskOrderBy, (a: TaskInfo, b: TaskInfo) => number> = {
@@ -72,25 +83,47 @@ export const Tasks = (props: TasksProps) => {
   })
   const refresh = async () => {
     const resp = await get()
-    const selectMap: Record<string, boolean> = {}
-    const expandMap: Record<string, boolean> = {}
-    for (const task of tasks()) {
-      selectMap[task.id] = task.selected ?? false
-      expandMap[task.id] = task.expanded ?? false
-    }
-    handleResp(resp, (data) =>
+    handleResp(resp, (data) => {
+      const fetchTime = new Date().getTime()
+      const curFetchTimeMap: Record<string, number> = {}
+      const prevFetchTimeMap: Record<string, number | undefined> = {}
+      const curProgressMap: Record<string, number> = {}
+      const prevProgressMap: Record<string, number | undefined> = {}
+      const taskLocalMap: Record<string, TaskLocal> = {}
+      for (const task of tasks()) {
+        curFetchTimeMap[task.id] = task.curFetchTime
+        prevFetchTimeMap[task.id] = task.prevFetchTime
+        curProgressMap[task.id] = task.progress
+        prevProgressMap[task.id] = task.prevProgress
+        taskLocalMap[task.id] = task.local
+      }
       setTasks(
         data
           ?.map((task) => {
+            let prevFetchTime: number | undefined
+            let prevProgress: number | undefined
+            if (task.progress === curProgressMap[task.id]) {
+              prevFetchTime = prevFetchTimeMap[task.id] // may be undefined
+              prevProgress = prevProgressMap[task.id] // may be undefined
+            } else {
+              prevFetchTime = curFetchTimeMap[task.id]
+              prevProgress = curProgressMap[task.id]
+            }
+            const taskLocal = taskLocalMap[task.id] ?? {
+              selected: false,
+              expanded: false,
+            }
             return {
               ...task,
-              selected: selectMap[task.id] ?? false,
-              expanded: expandMap[task.id] ?? false,
+              curFetchTime: fetchTime,
+              prevFetchTime: prevFetchTime,
+              prevProgress: prevProgress,
+              local: taskLocal,
             }
           })
           .sort(curSorter()) ?? [],
-      ),
-    )
+      )
+    })
   }
   refresh()
   if (props.done === "undone") {
@@ -108,14 +141,13 @@ export const Tasks = (props: TasksProps) => {
   )
   const [regexFilterValue, setRegexFilterValue] = createSignal("")
   const [regexFilter, setRegexFilter] = createSignal(new RegExp(""))
-  const [regexFilterCompileFailed, setRegexFilterCompileFailed] =
-    createSignal(false)
+  const [regexCompileFailed, setRegexCompileFailed] = createSignal(false)
   createEffect(() => {
     try {
       setRegexFilter(new RegExp(regexFilterValue()))
-      setRegexFilterCompileFailed(false)
+      setRegexCompileFailed(false)
     } catch (_) {
-      setRegexFilterCompileFailed(true)
+      setRegexCompileFailed(true)
     }
   })
   const [showOnlyMine, setShowOnlyMine] = createSignal(me().role !== 2)
@@ -128,60 +160,43 @@ export const Tasks = (props: TasksProps) => {
   const filteredTask = createMemo(() => {
     return tasks().filter(taskFilter())
   })
-  const allChecked = createMemo(() => {
-    return filteredTask()
-      .map((task) => task.selected)
-      .every(Boolean)
-  })
-  const isIndeterminate = createMemo(() => {
-    return (
+  const allSelected = createMemo(() =>
+    filteredTask()
+      .map((task) => task.local.selected)
+      .every(Boolean),
+  )
+  const isIndeterminate = createMemo(
+    () =>
       filteredTask()
-        .map((task) => task.selected)
-        .some(Boolean) && !allChecked()
-    )
-  })
-  const setSelected = (id: string, v: boolean) => {
+        .map((task) => task.local.selected)
+        .some(Boolean) && !allSelected(),
+  )
+  const selectAll = (v: boolean) =>
     setTasks(
       tasks().map((task) => {
-        if (task.id === id) task.selected = v
+        if (taskFilter()(task)) {
+          task.local.selected = v
+        }
         return task
       }),
     )
-  }
-  const selectAll = (v: boolean) => {
-    const filter = taskFilter()
+  const allExpanded = createMemo(() =>
+    filteredTask()
+      .map((task) => task.local.expanded)
+      .every(Boolean),
+  )
+  const expandAll = (v: boolean) =>
     setTasks(
       tasks().map((task) => {
-        if (filter(task)) task.selected = v
+        if (taskFilter()(task)) {
+          task.local.expanded = v
+        }
         return task
       }),
     )
-  }
-  const allExpanded = createMemo(() => {
-    return filteredTask()
-      .map((task) => task.expanded)
-      .every(Boolean)
-  })
-  const setExpanded = (id: string, v: boolean) => {
-    setTasks(
-      tasks().map((task) => {
-        if (task.id === id) task.expanded = v
-        return task
-      }),
-    )
-  }
-  const expandedAll = (v: boolean) => {
-    const filter = taskFilter()
-    setTasks(
-      tasks().map((task) => {
-        if (filter(task)) task.expanded = v
-        return task
-      }),
-    )
-  }
   const getSelectedId = () =>
     filteredTask()
-      .filter((task) => task.selected)
+      .filter((task) => task.local.selected)
       .map((task) => task.id)
   const [retrySelectedLoading, retrySelected] = useFetch(
     (): PEmptyResp => r.post(`/task/${props.type}/retry_some`, getSelectedId()),
@@ -226,6 +241,17 @@ export const Tasks = (props: TasksProps) => {
         refresh()
       },
     }
+  }
+  const getLocalSetter = (id: string) => {
+    return (l: TaskLocal) =>
+      setTasks(
+        tasks().map((t) => {
+          if (t.id === id) {
+            t.local = l
+          }
+          return t
+        }),
+      )
   }
   return (
     <VStack w="$full" alignItems="start" spacing="$2">
@@ -298,7 +324,7 @@ export const Tasks = (props: TasksProps) => {
           placeholder={t(`tasks.filter`)}
           value={regexFilterValue()}
           onInput={(e: any) => setRegexFilterValue(e.target.value as string)}
-          invalid={regexFilterCompileFailed()}
+          invalid={regexCompileFailed()}
         />
         <Show when={me().role === 2}>
           <Checkbox
@@ -321,7 +347,7 @@ export const Tasks = (props: TasksProps) => {
           <HStack w={cols[0].w} spacing="$1">
             <Checkbox
               disabled={filteredTask().length === 0}
-              checked={allChecked()}
+              checked={allSelected()}
               indeterminate={isIndeterminate()}
               onChange={(e: any) => selectAll(e.target.checked as boolean)}
             />
@@ -352,31 +378,27 @@ export const Tasks = (props: TasksProps) => {
           >
             {t(`tasks.attr.${cols[3].name}`)}
           </Text>
-          <Flex w={cols[4].w} gap="$2">
+          <Text w={cols[4].w} {...itemProps(cols[4])}>
+            {t(`tasks.attr.${cols[4].name}`)}
+          </Text>
+          <Flex w={cols[5].w} gap="$2">
             <Spacer />
-            <Text {...itemProps(cols[4])}>
-              {t(`tasks.attr.${cols[4].name}`)}
+            <Text {...itemProps(cols[5])}>
+              {t(`tasks.attr.${cols[5].name}`)}
             </Text>
             <Button
               size="xs"
               colorScheme="neutral"
-              onClick={() => expandedAll(!allExpanded())}
+              onClick={() => expandAll(!allExpanded())}
               disabled={filteredTask().length === 0}
             >
               {allExpanded() ? t(`tasks.fold_all`) : t(`tasks.expand_all`)}
             </Button>
           </Flex>
         </HStack>
-        <For each={curTasks()}>
-          {(_, i) => (
-            <Task
-              {...curTasks()[i()]}
-              {...props}
-              setSelected={setSelected}
-              setExpanded={setExpanded}
-            />
-          )}
-        </For>
+        {curTasks().map((task) => (
+          <Task {...task} {...props} setLocal={getLocalSetter(task.id)} />
+        ))}
       </VStack>
       <Paginator
         total={filteredTask().length}

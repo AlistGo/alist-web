@@ -33,6 +33,7 @@
     "creator": "Creator",
     "state": "State",
     "progress": "Progress",
+    "speed": "Speed",
     "operation": "Operation",
     "copy": {
       "src": "Source Path",
@@ -47,6 +48,7 @@
       "transfer_src": "Source Path",
       "transfer_dst": "Destination Path"
     },
+    "time_elapsed": "Time Elapsed",
     "status": "Status",
     "err": "Error"
   },

@@ -12,13 +12,14 @@ import {
   Progress,
   ProgressIndicator,
   Spacer,
+  Text,
   VStack,
 } from "@hope-ui/solid"
 import { createSignal, For, Show } from "solid-js"
 import { useT, useFetch } from "~/hooks"
-import { PEmptyResp, TaskInfo } from "~/types"
+import { PEmptyResp } from "~/types"
 import { handleResp, notify, r } from "~/utils"
-import { TasksProps } from "./Tasks"
+import { TaskAttribute, TaskLocalSetter, TasksProps } from "./Tasks"
 import { me } from "~/store"
 
 enum TaskStateEnum {
@@ -79,29 +80,41 @@ export const TaskState = (props: { state: number }) => {
 export type TaskOrderBy = "name" | "creator" | "state" | "progress"
 
 export interface TaskCol {
-  name: TaskOrderBy | "operation"
+  name: TaskOrderBy | "speed" | "operation"
   textAlign: "left" | "right" | "center"
   w: any
-}
-
-export interface TaskControlCallback {
-  setSelected: (id: string, v: boolean) => void
-  setExpanded: (id: string, v: boolean) => void
 }
 
 export const cols: TaskCol[] = [
   {
     name: "name",
     textAlign: "left",
-    w: me().role === 2 ? "calc(100% - 660px)" : "calc(100% - 540px)",
+    w: me().role === 2 ? "calc(100% - 660px)" : "calc(100% - 560px)",
   },
-  { name: "creator", textAlign: "center", w: me().role === 2 ? "120px" : "0" },
+  { name: "creator", textAlign: "center", w: me().role === 2 ? "100px" : "0" },
   { name: "state", textAlign: "center", w: "100px" },
-  { name: "progress", textAlign: "left", w: "160px" },
-  { name: "operation", textAlign: "right", w: "280px" },
+  { name: "progress", textAlign: "left", w: "140px" },
+  { name: "speed", textAlign: "center", w: "100px" },
+  { name: "operation", textAlign: "right", w: "220px" },
 ]
 
-export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
+export interface TaskLocal {
+  selected: boolean
+  expanded: boolean
+}
+
+const toTimeNumber = (n: number) => {
+  return Math.floor(n).toString().padStart(2, "0")
+}
+
+const getTimeStr = (millisecond: number) => {
+  const sec = (millisecond / 1000) % 60
+  const min = (millisecond / 1000 / 60) % 60
+  const hour = millisecond / 1000 / 3600
+  return `${toTimeNumber(hour)}:${toTimeNumber(min)}:${toTimeNumber(sec)}`
+}
+
+export const Task = (props: TaskAttribute & TasksProps & TaskLocalSetter) => {
   const t = useT()
   const operateName = props.done === "undone" ? "cancel" : "delete"
   const canRetry = props.done === "done" && props.state === TaskStateEnum.Failed
@@ -118,6 +131,49 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
   )
   const title =
     matches === null ? props.name : props.nameAnalyzer.title(matches)
+  const startTime =
+    props.start_time === null ? -1 : new Date(props.start_time).getTime()
+  const endTime =
+    props.end_time === null
+      ? new Date().getTime()
+      : new Date(props.end_time).getTime()
+  let speedText = "-"
+  const parseSpeedText = (timeDelta: number, lengthDelta: number) => {
+    let delta = lengthDelta / timeDelta
+    let unit = "bytes/s"
+    if (delta > 1024) {
+      delta /= 1024
+      unit = "KB/s"
+    }
+    if (delta > 1024) {
+      delta /= 1024
+      unit = "MB/s"
+    }
+    if (delta > 1024) {
+      delta /= 1024
+      unit = "GB/s"
+    }
+    return `${delta.toFixed(2)} ${unit}`
+  }
+  if (props.done) {
+    if (
+      props.start_time !== props.end_time &&
+      props.progress > 0 &&
+      startTime !== -1
+    ) {
+      const timeDelta = (endTime - startTime) / 1000
+      const lengthDelta = (props.total_bytes * props.progress) / 100
+      speedText = parseSpeedText(timeDelta, lengthDelta)
+    }
+  } else if (
+    props.prevProgress !== undefined &&
+    props.prevFetchTime !== undefined
+  ) {
+    const timeDelta = (props.curFetchTime - props.prevFetchTime) / 1000
+    const lengthDelta =
+      ((props.progress - props.prevProgress) * props.total_bytes) / 100
+    speedText = parseSpeedText(timeDelta, lengthDelta)
+  }
   return (
     <Show when={!deleted()}>
       <HStack w="$full" p="$2">
@@ -127,9 +183,12 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
             on:click={(e: MouseEvent) => {
               e.stopPropagation()
             }}
-            checked={props.selected}
+            checked={props.local.selected}
             onChange={(e: any) => {
-              props.setSelected(props.id, e.target.checked as boolean)
+              props.setLocal({
+                selected: e.target.checked as boolean,
+                expanded: props.local.expanded,
+              })
             }}
           />
           <Heading
@@ -157,14 +216,28 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
           rounded="$full"
           size="sm"
           value={props.progress}
+          mr="$1"
         >
           <ProgressIndicator color="$info8" rounded="$md" />
           {/* <ProgressLabel /> */}
         </Progress>
-        <Flex w={cols[4].w} gap="$1">
+        <Center w={cols[1].w}>
+          <Text
+            size="sm"
+            css={{
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {speedText}
+          </Text>
+        </Center>
+        <Flex w={cols[5].w} gap="$1">
           <Spacer />
           <Show when={props.canRetry}>
             <Button
+              size="sm"
               disabled={!canRetry}
               display={canRetry ? "block" : "none"}
               loading={retryLoading()}
@@ -180,6 +253,7 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
             </Button>
           </Show>
           <Button
+            size="sm"
             colorScheme="danger"
             loading={operateLoading()}
             onClick={async () => {
@@ -193,16 +267,20 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
             {t(`global.${operateName}`)}
           </Button>
           <Button
+            size="sm"
             colorScheme="neutral"
             onClick={() => {
-              props.setExpanded(props.id, !props.expanded)
+              props.setLocal({
+                selected: props.local.selected,
+                expanded: !props.local.expanded,
+              })
             }}
           >
-            {props.expanded ? t(`tasks.fold`) : t(`tasks.expand`)}
+            {props.local.expanded ? t(`tasks.fold`) : t(`tasks.expand`)}
           </Button>
         </Flex>
       </HStack>
-      <Show when={props.expanded}>
+      <Show when={props.local.expanded}>
         <VStack
           css={{ wordBreak: "break-all", fontSize: "0.8em" }}
           w="$full"
@@ -215,6 +293,18 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
             columnGap="$4"
             mb="$2"
           >
+            <Show when={startTime !== -1}>
+              <GridItem
+                color="$neutral9"
+                textAlign="right"
+                css={{ whiteSpace: "nowrap" }}
+              >
+                {t(`tasks.attr.time_elapsed`)}
+              </GridItem>
+              <GridItem color="$neutral9">
+                {getTimeStr(endTime - startTime)}
+              </GridItem>
+            </Show>
             <Show when={matches !== null}>
               <For each={Object.entries(props.nameAnalyzer.attrs)}>
                 {(entry) => (
@@ -249,7 +339,7 @@ export const Task = (props: TaskInfo & TasksProps & TaskControlCallback) => {
               >
                 {t(`tasks.attr.err`)}
               </GridItem>
-              <GridItem color="$danger9">{props.error} </GridItem>
+              <GridItem color="$danger9">{props.error}</GridItem>
             </Show>
           </Grid>
           <Divider />
