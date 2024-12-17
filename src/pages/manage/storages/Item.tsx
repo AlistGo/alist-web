@@ -30,6 +30,11 @@ export type ItemProps = DriverItem & {
         value: number
       }
     | {
+        type: Type.Float
+        onChange?: (value: number) => void
+        value: number
+      }
+    | {
         type: Type.String | Type.Text
         onChange?: (value: string) => void
         value: string
@@ -81,6 +86,19 @@ const Item = (props: ItemProps) => {
             onInput={
               props.type === Type.Number
                 ? (e) => props.onChange?.(parseInt(e.currentTarget.value))
+                : undefined
+            }
+          />
+        </Match>
+        <Match when={props.type === Type.Float}>
+          <Input
+            type="number"
+            id={props.name}
+            readOnly={props.readonly}
+            value={props.value as number}
+            onInput={
+              props.type === Type.Float
+                ? (e) => props.onChange?.(parseFloat(e.currentTarget.value))
                 : undefined
             }
           />
