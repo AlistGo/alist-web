@@ -15,6 +15,7 @@ import { PEmptyResp, PResp, User, UserMethods, UserPermissions } from "~/types"
 import { createStore } from "solid-js/store"
 import { For, Show } from "solid-js"
 import { me, setMe } from "~/store"
+import { PublicKeys } from "./PublicKeys"
 
 const Permission = (props: {
   can: boolean
@@ -159,6 +160,9 @@ const AddOrEdit = () => {
         >
           {t(`global.${id ? "save" : "add"}`)}
         </Button>
+        <Show when={id && !UserMethods.is_guest(user)}>
+          <PublicKeys isMine={false} userId={parseInt(id)} />
+        </Show>
       </VStack>
     </MaybeLoading>
   )

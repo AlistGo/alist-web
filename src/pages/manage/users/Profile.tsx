@@ -29,6 +29,7 @@ import {
   supported,
   CredentialCreationOptionsJSON,
 } from "@github/webauthn-json/browser-ponyfill"
+import { PublicKeys } from "./PublicKeys"
 
 const PermissionBadge = (props: { can: boolean; children: JSXElement }) => {
   return (
@@ -311,6 +312,7 @@ const Profile = () => {
           )}
         </For>
       </HStack>
+      <PublicKeys isMine={true} userId={me().id} />
     </VStack>
   )
 }
