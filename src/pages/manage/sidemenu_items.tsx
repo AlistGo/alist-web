@@ -108,7 +108,7 @@ export const side_menu_items: SideMenuItem[] = [
       {
         title: "manage.sidemenu.offline_download",
         icon: IoMagnetOutline,
-        to: "/@manage/tasks/aria2",
+        to: "/@manage/tasks/offline_download",
         role: UserRole.GENERAL,
         component: lazy(() => import("./tasks/offline_download")),
       },

@@ -3,12 +3,16 @@ import { me } from "~/store"
 import { TaskNameAnalyzer } from "./Tasks"
 import { useT } from "~/hooks"
 
-export const getPath = (device: string, path: string): JSX.Element => {
+export const getPath = (
+  device: string,
+  path: string,
+  asLink: boolean = true,
+): JSX.Element => {
   const fullPath = (device === "/" ? "" : device) + path
   const prefix = me().base_path === "/" ? "" : me().base_path
   const accessible = fullPath.startsWith(prefix)
   const [underline, setUnderline] = createSignal(false)
-  return accessible ? (
+  return accessible && asLink ? (
     <a
       style={underline() ? "text-decoration: underline" : ""}
       onMouseOver={() => setUnderline(true)}
@@ -49,14 +53,13 @@ export const getOfflineDownloadNameAnalyzer = (): TaskNameAnalyzer => {
 export const getOfflineDownloadTransferNameAnalyzer = (): TaskNameAnalyzer => {
   const t = useT()
   return {
-    regex: /^transfer ((?:.*\/)?(.+)) to \[(.+)]$/,
-    title: (matches) => matches[2],
+    regex: /^transfer \[(.*)]\((.*\/([^\/]+))\) to \[(.+)]\((.+)\)$/,
+    title: (matches) => matches[3],
     attrs: {
-      [t(`tasks.attr.offline_download.transfer_src`)]: (matches) => (
-        <p>{matches[1]}</p>
-      ),
+      [t(`tasks.attr.offline_download.transfer_src`)]: (matches) =>
+        getPath(matches[1], matches[2], false),
       [t(`tasks.attr.offline_download.transfer_dst`)]: (matches) =>
-        getPath("", matches[3]),
+        getPath(matches[4], matches[5]),
     },
   }
 }
