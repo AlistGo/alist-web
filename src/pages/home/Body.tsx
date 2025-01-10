@@ -17,7 +17,7 @@ export const Body = () => {
         w="$full"
         gap="$4"
       >
-        <Readme files={["header.md", "top.md"]} fromMeta="header" />
+        <Readme files={["header.md", "top.md", "index.md"]} fromMeta="header" />
         <Nav />
         <Obj />
         <Readme
