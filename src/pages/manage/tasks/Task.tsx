@@ -117,7 +117,10 @@ const getTimeStr = (millisecond: number) => {
 export const Task = (props: TaskAttribute & TasksProps & TaskLocalSetter) => {
   const t = useT()
   const operateName = props.done === "undone" ? "cancel" : "delete"
-  const canRetry = props.done === "done" && props.state === TaskStateEnum.Failed
+  const canRetry =
+    props.done === "done" &&
+    (props.state === TaskStateEnum.Failed ||
+      props.state === TaskStateEnum.Canceled)
   const [operateLoading, operate] = useFetch(
     (): PEmptyResp =>
       r.post(`/task/${props.type}/${operateName}?tid=${props.id}`),
