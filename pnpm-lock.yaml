@@ -35,9 +35,6 @@ importers:
       '@stitches/core':
         specifier: ^1.2.8
         version: 1.2.8
-      '@types/qrcode':
-        specifier: ^1.5.5
-        version: 1.5.5
       '@viselect/vanilla':
         specifier: ^3.5.0
         version: 3.5.0
@@ -71,6 +68,9 @@ importers:
       flv.js:
         specifier: ^1.6.2
         version: 1.6.2
+      hash-wasm:
+        specifier: ^4.12.0
+        version: 4.12.0
       hls.js:
         specifier: ^1.2.1
         version: 1.2.1
@@ -138,12 +138,18 @@ importers:
       '@hrgui/libass-wasm-ts':
         specifier: ^1.0.3
         version: 1.0.3
+      '@types/crypto-js':
+        specifier: ^4.2.2
+        version: 4.2.2
       '@types/mark.js':
         specifier: ^8.11.8
         version: 8.11.8
       '@types/node':
         specifier: ^20.0.0
         version: 20.0.0
+      '@types/qrcode':
+        specifier: ^1.5.5
+        version: 1.5.5
       '@types/sha256':
         specifier: ^0.2.0
         version: 0.2.0
@@ -485,6 +491,9 @@ packages:
 
   '@stitches/core@1.2.8':
     resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
+
+  '@types/crypto-js@4.2.2':
+    resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
 
   '@types/debug@4.1.7':
     resolution: {integrity: sha512-9AonUzyTjXXhEOa0DnqpzZi6VHlqKMswga9EXjpXnnqxwLtdvPPtlO8evrI5D9S6asFRCQ6v+wpiUKbw+vKqyg==}
@@ -1090,6 +1099,9 @@ packages:
   has@1.0.3:
     resolution: {integrity: sha512-f2dvO0VU6Oej7RkWJGrehjbzMAjFp5/VKPp5tTpWIV4JHHZK1/BxbFRtf/siA2SWTe09caDmVtYYzWEIbBS4zw==}
     engines: {node: '>= 0.4.0'}
+
+  hash-wasm@4.12.0:
+    resolution: {integrity: sha512-+/2B2rYLb48I/evdOIhP+K/DD2ca2fgBjp6O+GBEnCDk2e4rpeXIK8GvIyRPjTezgmWn9gmKwkQjjx6BtqDHVQ==}
 
   hast-to-hyperscript@10.0.1:
     resolution: {integrity: sha512-dhIVGoKCQVewFi+vz3Vt567E4ejMppS1haBRL6TEmeLeJVB1i/FJIIg/e6s1Bwn0g5qtYojHEKvyGA+OZuyifw==}
@@ -2419,6 +2431,8 @@ snapshots:
 
   '@stitches/core@1.2.8': {}
 
+  '@types/crypto-js@4.2.2': {}
+
   '@types/debug@4.1.7':
     dependencies:
       '@types/ms': 0.7.31
@@ -2955,6 +2969,8 @@ snapshots:
   has@1.0.3:
     dependencies:
       function-bind: 1.1.1
+
+  hash-wasm@4.12.0: {}
 
   hast-to-hyperscript@10.0.1:
     dependencies:

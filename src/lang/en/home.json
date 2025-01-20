@@ -93,6 +93,7 @@
   },
   "upload": {
     "add_as_task": "Add as task",
+    "try_rapid": "Try rapid",
     "upload-tips": "Drag files here to upload, or click:",
     "release": "Release to upload",
     "no_files_drag": "No files were dragged in.",

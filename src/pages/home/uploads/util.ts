@@ -1,4 +1,5 @@
 import { UploadFileProps } from "./types"
+import { createMD5, createSHA1, createSHA256 } from "hash-wasm"
 
 export const traverseFileTree = async (entry: FileSystemEntry) => {
   let res: File[] = []
@@ -58,4 +59,26 @@ export const File2Upload = (file: File): UploadFileProps => {
     speed: 0,
     status: "pending",
   }
+}
+
+export const calculateHash = async (file: File) => {
+  const md5Digest = await createMD5()
+  const sha1Digest = await createSHA1()
+  const sha256Digest = await createSHA256()
+  const reader = file.stream().getReader()
+  const read = async () => {
+    const { done, value } = await reader.read()
+    if (done) {
+      return
+    }
+    md5Digest.update(value)
+    sha1Digest.update(value)
+    sha256Digest.update(value)
+    await read()
+  }
+  await read()
+  const md5 = md5Digest.digest("hex")
+  const sha1 = sha1Digest.digest("hex")
+  const sha256 = sha256Digest.digest("hex")
+  return { md5, sha1, sha256 }
 }
