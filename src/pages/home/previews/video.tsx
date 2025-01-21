@@ -172,6 +172,7 @@ const Preview = () => {
       option.subtitle = {
         url: proxyLink(defaultSubtitle, true),
         type: ext(defaultSubtitle.name),
+        escape: false,
       }
     }
 
