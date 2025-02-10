@@ -10,6 +10,8 @@ import {
 } from "~/utils"
 import { createSignal, onCleanup, onMount } from "solid-js"
 import { PResp } from "~/types"
+import bencode from "bencode"
+import crypto from "crypto-js"
 
 const deletePolicies = [
   "delete_on_upload_succeed",
@@ -19,6 +21,34 @@ const deletePolicies = [
 ] as const
 
 type DeletePolicy = (typeof deletePolicies)[number]
+
+function utf8Decode(data: Uint8Array): string {
+  return crypto.enc.Utf8.stringify(crypto.lib.WordArray.create(data))
+}
+
+function toMagnetUrl(torrentBuffer: Uint8Array) {
+  const data = bencode.decode(torrentBuffer as any)
+  const infoEncode = bencode.encode(data.info) as unknown as Uint8Array
+
+  const infoHash = crypto
+    .SHA1(crypto.lib.WordArray.create(infoEncode))
+    .toString()
+  let params = {} as any
+
+  if (Number.isInteger(data?.info?.length)) {
+    params.xl = data.info.length
+  }
+  if (data.info.name) {
+    params.dn = utf8Decode(data.info.name)
+  }
+  if (data.announce) {
+    params.tr = utf8Decode(data.announce)
+  }
+
+  return `magnet:?xt=urn:btih:${infoHash}&${new URLSearchParams(
+    params,
+  ).toString()}`
+}
 
 export const OfflineDownload = () => {
   const t = useT()
@@ -50,6 +80,31 @@ export const OfflineDownload = () => {
   onCleanup(() => {
     bus.off("tool", handler)
   })
+
+  // convert torrent file to magnet link
+  const handleTorrentFileDrop = async (
+    e: DragEvent,
+    setValue: (value: string) => void,
+  ) => {
+    e.preventDefault()
+    if (e.dataTransfer?.files.length) {
+      const values = []
+      for (const file of e.dataTransfer.files) {
+        if (file.name.toLowerCase().endsWith(".torrent")) {
+          try {
+            const buffer = await file.arrayBuffer()
+            values.push(toMagnetUrl(new Uint8Array(buffer)))
+          } catch (err) {
+            console.error("Failed to convert torrent file to magnet link:", err)
+          }
+        }
+      }
+      if (values.length) {
+        setValue(values.join("\n"))
+      }
+    }
+  }
+
   return (
     <ModalInput
       title="home.toolbar.offline_download"
@@ -58,6 +113,7 @@ export const OfflineDownload = () => {
       onClose={onClose}
       loading={toolsLoading() || loading()}
       tips={t("home.toolbar.offline_download-tips")}
+      onDrop={handleTorrentFileDrop}
       topSlot={
         <Box mb="$2">
           <SelectWrapper
