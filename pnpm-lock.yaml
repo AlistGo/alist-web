@@ -155,7 +155,7 @@ importers:
         version: 0.2.0
       '@types/streamsaver':
         specifier: ^2.0.1
-        version: 2.0.1
+        version: 2.0.4
       '@vitejs/plugin-legacy':
         specifier: ^2.0.1
         version: 2.0.1(terser@5.14.2)(vite@3.0.8(terser@5.14.2))
@@ -546,8 +546,8 @@ packages:
   '@types/sizzle@2.3.3':
     resolution: {integrity: sha512-JYM8x9EGF163bEyhdJBpR2QX1R5naCJHC8ucJylJ3w9/CVBaskdQ8WqBf8MmQrd1kRvp/a4TS8HJ+bxzR7ZJYQ==}
 
-  '@types/streamsaver@2.0.1':
-    resolution: {integrity: sha512-I49NtT8w6syBI3Zg3ixCyygTHoTVMY0z2TMRcTgccdIsVd2MwlKk7ITLHLsJtgchUHcOd7QEARG9h0ifcA6l2Q==}
+  '@types/streamsaver@2.0.4':
+    resolution: {integrity: sha512-XxpGYIaBP+2NgZ5+4YeG7hI3wYAyOX8QB92xlPpNvStIAvlniml1th+D0bes1lUZz52IWkPlXMf88wy8NzFkbA==}
 
   '@types/unist@2.0.6':
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
@@ -2486,7 +2486,7 @@ snapshots:
 
   '@types/sizzle@2.3.3': {}
 
-  '@types/streamsaver@2.0.1': {}
+  '@types/streamsaver@2.0.4': {}
 
   '@types/unist@2.0.6': {}
 
