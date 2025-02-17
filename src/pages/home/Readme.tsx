@@ -2,7 +2,7 @@ import { Box, useColorModeValue } from "@hope-ui/solid"
 import { createMemo, Show, createResource, on } from "solid-js"
 import { Markdown, MaybeLoading } from "~/components"
 import { useLink, useRouter } from "~/hooks"
-import { objStore, State } from "~/store"
+import { getSettingBool, objStore, State } from "~/store"
 import { fetchText } from "~/utils"
 
 export function Readme(props: {
@@ -54,7 +54,7 @@ export function Readme(props: {
   }
   const [content] = createResource(readme, fetchContent)
   return (
-    <Show when={readme()}>
+    <Show when={getSettingBool("readme_autorender") && readme()}>
       <Box w="$full" rounded="$xl" p="$4" bgColor={cardBg()} shadow="$lg">
         <MaybeLoading loading={content.loading}>
           <Markdown
