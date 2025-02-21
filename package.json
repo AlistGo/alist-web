@@ -36,6 +36,7 @@
   "devDependencies": {
     "@crowdin/cli": "^3.7.10",
     "@hrgui/libass-wasm-ts": "^1.0.3",
+    "@types/bencode": "^2.0.4",
     "@types/crypto-js": "^4.2.2",
     "@types/mark.js": "^8.11.8",
     "@types/node": "^20.0.0",
@@ -69,6 +70,7 @@
     "artplayer-plugin-danmuku": "^5.0.1",
     "asciinema-player": "^3.6.3",
     "axios": "^1.0.0",
+    "bencode": "^4.0.0",
     "chardet": "^2.0.0",
     "clsx": "^2.0.0",
     "copy-to-clipboard": "^3.3.2",

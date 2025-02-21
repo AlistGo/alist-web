@@ -53,6 +53,9 @@ importers:
       axios:
         specifier: ^1.0.0
         version: 1.1.3
+      bencode:
+        specifier: ^4.0.0
+        version: 4.0.0
       chardet:
         specifier: ^2.0.0
         version: 2.0.0
@@ -138,6 +141,9 @@ importers:
       '@hrgui/libass-wasm-ts':
         specifier: ^1.0.3
         version: 1.0.3
+      '@types/bencode':
+        specifier: ^2.0.4
+        version: 2.0.4
       '@types/crypto-js':
         specifier: ^4.2.2
         version: 4.2.2
@@ -492,6 +498,9 @@ packages:
   '@stitches/core@1.2.8':
     resolution: {integrity: sha512-Gfkvwk9o9kE9r9XNBmJRfV8zONvXThnm1tcuojL04Uy5uRyqg93DC83lDebl0rocZCfKSjUv+fWYtMQmEDJldg==}
 
+  '@types/bencode@2.0.4':
+    resolution: {integrity: sha512-sirDu3HUSG7jZMlhTDvCzSFiPR4lkUYBQA75CoMi6DEf2alFZWJWtHgfjBbb9PachPZhPMB1IlH09deyMNBipQ==}
+
   '@types/crypto-js@4.2.2':
     resolution: {integrity: sha512-sDOLlVbHhXpAUAL0YHDUUwDZf3iN4Bwi4W6a0W0b+QcAezUbRtH4FVb+9J4h+XFPW7l/gQ9F8qC7P+Ec4k8QVQ==}
 
@@ -642,6 +651,14 @@ packages:
 
   balloon-css@0.5.2:
     resolution: {integrity: sha512-zheJpzwyNrG4t39vusA67v3BYg1HTVXOF8cErPEHzWK88PEOFwgo6Ea9VHOgOWNMgeuOtFVtB73NE2NWl9uDyQ==}
+
+  base64-arraybuffer@1.0.2:
+    resolution: {integrity: sha512-I3yl4r9QB5ZRY3XuJVEPfc2XhZO6YweFPI+UovAzn+8/hb3oJ6lnysaFcjVpkCPfVWFUDvoZ8kmVDP7WyRtYtQ==}
+    engines: {node: '>= 0.6.0'}
+
+  bencode@4.0.0:
+    resolution: {integrity: sha512-AERXw18df0pF3ziGOCyUjqKZBVNH8HV3lBxnx5w0qtgMIk4a1wb9BkcCQbkp9Zstfrn/dzRwl7MmUHHocX3sRQ==}
+    engines: {node: '>=12.20.0'}
 
   boolbase@1.0.0:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
@@ -1909,6 +1926,9 @@ packages:
     engines: {node: '>=4.2.0'}
     hasBin: true
 
+  uint8-util@2.2.5:
+    resolution: {integrity: sha512-/QxVQD7CttWpVUKVPz9znO+3Dd4BdTSnFQ7pv/4drVhC9m4BaL2LFHTkJn6EsYoxT79VDq/2Gg8L0H22PrzyMw==}
+
   unified@10.1.2:
     resolution: {integrity: sha512-pUSWAi/RAnVy1Pif2kAoeWNBa3JVrx0MId2LASj8G+7AiHWoKZNTomq6LG326T68U7/e263X6fTdcXIy7XnF7Q==}
 
@@ -2431,6 +2451,10 @@ snapshots:
 
   '@stitches/core@1.2.8': {}
 
+  '@types/bencode@2.0.4':
+    dependencies:
+      '@types/node': 20.0.0
+
   '@types/crypto-js@4.2.2': {}
 
   '@types/debug@4.1.7':
@@ -2578,6 +2602,12 @@ snapshots:
   balanced-match@1.0.2: {}
 
   balloon-css@0.5.2: {}
+
+  base64-arraybuffer@1.0.2: {}
+
+  bencode@4.0.0:
+    dependencies:
+      uint8-util: 2.2.5
 
   boolbase@1.0.0: {}
 
@@ -3956,6 +3986,10 @@ snapshots:
   typescript-natural-sort@0.7.2: {}
 
   typescript@4.7.4: {}
+
+  uint8-util@2.2.5:
+    dependencies:
+      base64-arraybuffer: 1.0.2
 
   unified@10.1.2:
     dependencies:
