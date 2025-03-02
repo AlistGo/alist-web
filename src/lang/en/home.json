@@ -143,14 +143,8 @@
     "open_item_on_checkbox": "Open item on Checkbox",
     "open_item_on_checkbox_options": {
       "direct": "Direct",
-      "disable_while_checked": "Disable while checked",
-      "with_ctrl": "With Ctrl/Command hold",
-      "with_alt": "With Alt/Option hold"
-    },
-    "select_with_mouse": "Select item with mouse while checkbox closed",
-    "select_with_mouse_options": {
-      "disabled": "Disabled",
-      "open_item_with_dblclick": "Open item with double click"
+      "dblclick": "Double click",
+      "disable_while_checked": "Disable while checked"
     }
   },
   "package_download": {

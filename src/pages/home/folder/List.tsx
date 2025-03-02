@@ -92,8 +92,7 @@ const ListLayout = () => {
     <VStack
       onDragOver={onDragOver}
       oncapture:contextmenu={captureContentMenu}
-      classList={{ "viselect-container": isMouseSupported() }}
-      class="list"
+      class="list viselect-container"
       w="$full"
       spacing="$1"
     >

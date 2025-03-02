@@ -1,6 +1,6 @@
 import naturalSort from "typescript-natural-sort"
 import { cookieStorage, createStorageSignal } from "@solid-primitives/storage"
-import { createSignal } from "solid-js"
+import { createMemo, createSignal } from "solid-js"
 import { createStore, produce } from "solid-js/store"
 import { Obj, StoreObj } from "~/types"
 import { bus, log } from "~/utils"
@@ -50,11 +50,9 @@ const [objStore, setObjStore] = createStore<{
   err: "",
 })
 
-const [selectedNum, setSelectedNum] = createSignal(0)
-
 const setObjs = (objs: Obj[]) => {
-  setSelectedNum(0)
-  lastChecked = { index: -1, selected: false }
+  lastChecked.start = -1
+  lastChecked.end = -1
   setObjStore("objs", objs)
   setObjStore("obj", "is_dir", true)
 }
@@ -62,7 +60,6 @@ const setObjs = (objs: Obj[]) => {
 export const ObjStore = {
   set: (data: object) => {
     setObjStore(data)
-    setSelectedNum(selectedObjs().length)
   },
   setObj: (obj: Obj) => {
     setObjStore("obj", obj)
@@ -117,48 +114,59 @@ export const appendObjs = (objs: Obj[]) => {
   )
 }
 
-let lastChecked = {
-  index: -1,
-  selected: false,
+const lastChecked = {
+  start: -1,
+  end: -1,
 }
 
 export const selectIndex = (index: number, checked: boolean, one?: boolean) => {
-  if (
-    keyPressed["Shift"] &&
-    lastChecked.index !== -1 &&
-    lastChecked.selected === checked
-  ) {
-    const start = Math.min(lastChecked.index, index)
-    const end = Math.max(lastChecked.index, index)
-    const curCheckedNum = objStore.objs
-      .slice(start, end + 1)
-      .filter((o) => o.selected).length
-
-    setObjStore("objs", { from: start, to: end }, () => ({
-      selected: checked,
-    }))
-    // update selected num
-    const newSelectedNum =
-      selectedNum() - curCheckedNum + (checked ? end - start + 1 : 0)
-    setSelectedNum(newSelectedNum)
-  } else {
-    setObjStore(
-      "objs",
-      index,
-      produce((obj) => {
-        if (obj.selected !== checked) {
-          setSelectedNum(checked ? selectedNum() + 1 : selectedNum() - 1)
-        }
-        obj.selected = checked
-      }),
-    )
+  if (one) {
+    selectAll(false)
   }
-  lastChecked = { index, selected: checked }
-  one && setSelectedNum(checked ? 1 : 0)
+  if (keyPressed["Shift"]) {
+    if (lastChecked.start < 0) {
+      for (
+        let i = 0;
+        i < Math.max(index + 1, objStore.objs.length - index);
+        ++i
+      ) {
+        if (objStore.objs[index - i]?.selected) {
+          lastChecked.start = index - i
+          lastChecked.end = index - i
+          break
+        } else if (objStore.objs[index + i]?.selected) {
+          lastChecked.start = index + i
+          lastChecked.end = index + i
+          break
+        }
+      }
+    }
+    const countUncheck = Math.abs(lastChecked.end - lastChecked.start)
+    const signUncheck = Math.sign(lastChecked.end - lastChecked.start)
+    for (let i = 1; i <= countUncheck; ++i) {
+      setObjStore("objs", lastChecked.start + signUncheck * i, {
+        selected: false,
+      })
+    }
+    const countCheck = Math.abs(index - lastChecked.start)
+    const signCheck = Math.sign(index - lastChecked.start)
+    for (let i = 0; i <= countCheck; ++i) {
+      setObjStore("objs", lastChecked.start + signCheck * i, { selected: true })
+    }
+    lastChecked.end = index
+  } else {
+    setObjStore("objs", index, { selected: checked })
+    if (checked) {
+      lastChecked.start = index
+      lastChecked.end = index
+    } else {
+      lastChecked.end = -1
+      lastChecked.start = -1
+    }
+  }
 }
 
 export const selectAll = (checked: boolean) => {
-  setSelectedNum(checked ? objStore.objs.length : 0)
   setObjStore("objs", {}, (obj) => ({ selected: checked }))
 }
 
@@ -181,6 +189,8 @@ export const haveSelected = () => {
 export const isIndeterminate = () => {
   return selectedNum() > 0 && selectedNum() < objStore.objs.length
 }
+
+const selectedNum = createMemo(() => selectedObjs().length)
 
 export type LayoutType = "list" | "grid" | "image"
 const [pathname, setPathname] = createSignal<string>(location.pathname)

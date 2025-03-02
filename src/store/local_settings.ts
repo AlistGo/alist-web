@@ -57,17 +57,7 @@ export const initialLocalSettings = [
     key: "open_item_on_checkbox",
     default: "direct",
     type: "select",
-    options: () =>
-      isMobile
-        ? ["direct", "disable_while_checked"]
-        : ["direct", "disable_while_checked", "with_alt", "with_ctrl"],
-  },
-  {
-    key: "select_with_mouse",
-    default: "disabled",
-    type: "select",
-    options: ["disabled", "open_item_with_dblclick"],
-    hidden: isMobile,
+    options: ["direct", "dblclick", "disable_while_checked"],
   },
 ]
 export type LocalSetting = (typeof initialLocalSettings)[number]

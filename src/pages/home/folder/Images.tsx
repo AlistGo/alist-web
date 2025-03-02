@@ -29,7 +29,7 @@ const ImageLayout = (props: { images: StoreObj[] }) => {
   return (
     <VStack
       oncapture:contextmenu={captureContentMenu}
-      classList={{ "viselect-container": isMouseSupported() }}
+      class="viselect-container"
       spacing="$2"
       w="$full"
     >

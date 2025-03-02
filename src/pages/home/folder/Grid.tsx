@@ -12,7 +12,7 @@ const GridLayout = () => {
   return (
     <Grid
       oncapture:contextmenu={captureContentMenu}
-      classList={{ "viselect-container": isMouseSupported() }}
+      class="viselect-container"
       w="$full"
       gap="$1"
       templateColumns={`repeat(auto-fill, minmax(${

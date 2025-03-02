@@ -1,18 +1,14 @@
 import { Center, VStack, Icon } from "@hope-ui/solid"
 import { Motion } from "@motionone/solid"
 import { useContextMenu } from "solid-contextmenu"
-import { batch, createMemo, createSignal, Show } from "solid-js"
+import { batch, Show } from "solid-js"
 import { CenterLoading, ImageWithError } from "~/components"
 import { useLink, usePath, useUtil } from "~/hooks"
 import { checkboxOpen, getMainColor, selectAll, selectIndex } from "~/store"
 import { ObjType, StoreObj } from "~/types"
 import { bus } from "~/utils"
 import { getIconByObj } from "~/utils/icon"
-import {
-  ItemCheckbox,
-  useOpenItemWithCheckbox,
-  useSelectWithMouse,
-} from "./helper"
+import { ItemCheckbox, useSelectWithMouse } from "./helper"
 
 export const ImageItem = (props: { obj: StoreObj; index: number }) => {
   const { isHide } = useUtil()
@@ -23,14 +19,10 @@ export const ImageItem = (props: { obj: StoreObj; index: number }) => {
   const objIcon = (
     <Icon color={getMainColor()} boxSize="$12" as={getIconByObj(props.obj)} />
   )
-  const [hover, setHover] = createSignal(false)
-  const showCheckbox = createMemo(
-    () => checkboxOpen() && (hover() || props.obj.selected),
-  )
   const { show } = useContextMenu({ id: 1 })
   const { rawLink } = useLink()
-  const { isMouseSupported } = useSelectWithMouse()
-  const isShouldOpenItem = useOpenItemWithCheckbox()
+  const { openWithDoubleClick, toggleWithClick, restoreSelectionCache } =
+    useSelectWithMouse()
   return (
     <Motion.div
       initial={{ opacity: 0, scale: 0.9 }}
@@ -53,29 +45,31 @@ export const ImageItem = (props: { obj: StoreObj; index: number }) => {
         _hover={{
           border: `2px solid ${getMainColor()}`,
         }}
+        cursor={
+          openWithDoubleClick() || toggleWithClick() ? "default" : "pointer"
+        }
         onMouseEnter={() => {
-          setHover(true)
           setPathAs(props.obj.name, props.obj.is_dir, true)
-        }}
-        onMouseLeave={() => {
-          setHover(false)
         }}
         onContextMenu={(e: MouseEvent) => {
           batch(() => {
-            selectAll(false)
             selectIndex(props.index, true, true)
           })
           show(e, { props: props.obj })
         }}
       >
         <Center w="$full" pos="relative">
-          <Show
-            when={showCheckbox() || (isMouseSupported() && props.obj.selected)}
-          >
+          <Show when={checkboxOpen()}>
             <ItemCheckbox
               pos="absolute"
               left="$1"
               top="$1"
+              on:mousedown={(e: MouseEvent) => {
+                e.stopPropagation()
+              }}
+              on:click={(e: MouseEvent) => {
+                e.stopPropagation()
+              }}
               checked={props.obj.selected}
               onChange={(e: any) => {
                 selectIndex(props.index, e.target.checked)
@@ -92,23 +86,18 @@ export const ImageItem = (props: { obj: StoreObj; index: number }) => {
             fallbackErr={objIcon}
             src={rawLink(props.obj)}
             loading="lazy"
-            cursor={
-              !isMouseSupported() && (!checkboxOpen() || isShouldOpenItem())
-                ? "pointer"
-                : "default"
-            }
-            on:dblclick={(e: MouseEvent) => {
-              if (!isMouseSupported()) return
-              if (e.ctrlKey || e.metaKey || e.shiftKey) return
+            on:dblclick={() => {
+              if (!openWithDoubleClick()) return
               bus.emit("gallery", props.obj.name)
+              selectIndex(props.index, true, true)
             }}
-            on:click={() => {
-              if (isMouseSupported()) return
-              if (!checkboxOpen() || isShouldOpenItem()) {
-                bus.emit("gallery", props.obj.name)
-                return
-              }
-              selectIndex(props.index, !props.obj.selected)
+            on:click={(e: MouseEvent) => {
+              if (openWithDoubleClick()) return
+              if (e.ctrlKey || e.metaKey || e.shiftKey) return
+              if (!restoreSelectionCache()) return
+              if (toggleWithClick())
+                return selectIndex(props.index, !props.obj.selected)
+              bus.emit("gallery", props.obj.name)
             }}
           />
         </Center>

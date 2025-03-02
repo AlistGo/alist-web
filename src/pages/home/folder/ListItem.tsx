@@ -9,17 +9,12 @@ import {
   getMainColor,
   local,
   OrderBy,
-  selectAll,
   selectIndex,
 } from "~/store"
 import { ObjType, StoreObj } from "~/types"
 import { bus, formatDate, getFileSize, hoverColor } from "~/utils"
 import { getIconByObj } from "~/utils/icon"
-import {
-  ItemCheckbox,
-  useOpenItemWithCheckbox,
-  useSelectWithMouse,
-} from "./helper"
+import { ItemCheckbox, useSelectWithMouse } from "./helper"
 
 export interface Col {
   name: OrderBy
@@ -41,8 +36,8 @@ export const ListItem = (props: { obj: StoreObj; index: number }) => {
   const { setPathAs } = usePath()
   const { show } = useContextMenu({ id: 1 })
   const { pushHref, to } = useRouter()
-  const { isMouseSupported } = useSelectWithMouse()
-  const isShouldOpenItem = useOpenItemWithCheckbox()
+  const { openWithDoubleClick, toggleWithClick, restoreSelectionCache } =
+    useSelectWithMouse()
   const filenameStyle = () => local["list_item_filename_overflow"]
   return (
     <Motion.div
@@ -68,25 +63,22 @@ export const ListItem = (props: { obj: StoreObj; index: number }) => {
         as={LinkWithPush}
         href={props.obj.name}
         cursor={
-          !isMouseSupported() && (!checkboxOpen() || isShouldOpenItem())
-            ? "pointer"
-            : "default"
+          openWithDoubleClick() || toggleWithClick() ? "default" : "pointer"
         }
         bgColor={props.obj.selected ? hoverColor() : undefined}
-        on:dblclick={(e: MouseEvent) => {
-          if (!isMouseSupported()) return
-          if (e.ctrlKey || e.metaKey || e.shiftKey) return
+        on:dblclick={() => {
+          if (!openWithDoubleClick()) return
+          selectIndex(props.index, true, true)
           to(pushHref(props.obj.name))
         }}
         on:click={(e: MouseEvent) => {
-          if (isMouseSupported()) return e.preventDefault()
-          if (!checkboxOpen()) return
           e.preventDefault()
-          if (isShouldOpenItem()) {
-            to(pushHref(props.obj.name))
-            return
-          }
-          selectIndex(props.index, !props.obj.selected)
+          if (openWithDoubleClick()) return
+          if (e.ctrlKey || e.metaKey || e.shiftKey) return
+          if (!restoreSelectionCache()) return
+          if (toggleWithClick())
+            return selectIndex(props.index, !props.obj.selected)
+          to(pushHref(props.obj.name))
         }}
         onMouseEnter={() => {
           setPathAs(props.obj.name, props.obj.is_dir, true)
@@ -96,7 +88,6 @@ export const ListItem = (props: { obj: StoreObj; index: number }) => {
             // if (!checkboxOpen()) {
             //   toggleCheckbox();
             // }
-            selectAll(false)
             selectIndex(props.index, true, true)
           })
           show(e, { props: props.obj })
@@ -106,6 +97,9 @@ export const ListItem = (props: { obj: StoreObj; index: number }) => {
           <Show when={checkboxOpen()}>
             <ItemCheckbox
               // colorScheme="neutral"
+              on:mousedown={(e: MouseEvent) => {
+                e.stopPropagation()
+              }}
               on:click={(e: MouseEvent) => {
                 e.stopPropagation()
               }}
@@ -121,12 +115,14 @@ export const ListItem = (props: { obj: StoreObj; index: number }) => {
             color={getMainColor()}
             as={getIconByObj(props.obj)}
             mr="$1"
+            cursor={props.obj.type !== ObjType.IMAGE ? "inherit" : "pointer"}
             on:click={(e: MouseEvent) => {
-              if (props.obj.type === ObjType.IMAGE) {
-                e.stopPropagation()
-                e.preventDefault()
-                bus.emit("gallery", props.obj.name)
-              }
+              if (props.obj.type !== ObjType.IMAGE) return
+              if (e.ctrlKey || e.metaKey || e.shiftKey) return
+              if (!restoreSelectionCache()) return
+              bus.emit("gallery", props.obj.name)
+              e.preventDefault()
+              e.stopPropagation()
             }}
           />
           <Text
