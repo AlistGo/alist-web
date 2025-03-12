@@ -175,8 +175,8 @@ importers:
         specifier: ^5.14.2
         version: 5.14.2
       typescript:
-        specifier: ^4.7.4
-        version: 4.7.4
+        specifier: ^5.0.0
+        version: 5.5.4
       vite:
         specifier: ^3.0.8
         version: 3.0.8(terser@5.14.2)
@@ -1904,9 +1904,9 @@ packages:
   typescript-natural-sort@0.7.2:
     resolution: {integrity: sha512-C8gaSIZySgJ+PchvslIJ6j5wcUIKPsGMzUm1gbFSmKjk+YkXTYPLlFc8UJHp2mvUadF80pWPgsxsAOPIP3TZ4g==}
 
-  typescript@4.7.4:
-    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
-    engines: {node: '>=4.2.0'}
+  typescript@5.5.4:
+    resolution: {integrity: sha512-Mtq29sKDAEYP7aljRgtPOpTvOfbwRWlS6dPRzwjdE+C0R4brX/GUyhHSecbHMFLNBLcJIPt9nl9yG5TZ1weH+Q==}
+    engines: {node: '>=14.17'}
     hasBin: true
 
   unified@10.1.2:
@@ -3955,7 +3955,7 @@ snapshots:
 
   typescript-natural-sort@0.7.2: {}
 
-  typescript@4.7.4: {}
+  typescript@5.5.4: {}
 
   unified@10.1.2:
     dependencies:
