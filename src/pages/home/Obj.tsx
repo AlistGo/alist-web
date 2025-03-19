@@ -15,7 +15,7 @@ import {
   getPagination,
   objStore,
   password,
-  recordScroll,
+  recordHistory,
   setPassword,
   /*layout,*/ State,
 } from "~/store"
@@ -37,7 +37,7 @@ export const Obj = () => {
   const pagination = getPagination()
   const page = createMemo(() => {
     return pagination.type === "pagination"
-      ? parseInt(searchParams["page"]) || 1
+      ? parseInt(searchParams["page"], 10) || 1
       : undefined
   })
   let lastPathname: string
@@ -45,7 +45,7 @@ export const Obj = () => {
   createEffect(
     on([pathname, page], async ([pathname, page]) => {
       if (lastPathname) {
-        recordScroll(lastPathname, lastPage)
+        recordHistory(lastPathname, lastPage)
       }
       lastPathname = pathname
       lastPage = page

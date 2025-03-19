@@ -11,7 +11,6 @@ import {
   recoverHistory,
   clearHistory,
   me,
-  recordHistory,
 } from "~/store"
 import {
   fsGet,
@@ -137,7 +136,6 @@ export const usePath = () => {
           ObjStore.setRelated(data.related ?? [])
           ObjStore.setRawUrl(data.raw_url)
           ObjStore.setState(State.File)
-          recordHistory(path, index)
         }
       },
       handleErr,
@@ -175,7 +173,6 @@ export const usePath = () => {
         ObjStore.setWrite(data.write)
         ObjStore.setProvider(data.provider)
         ObjStore.setState(State.Folder)
-        recordHistory(path, index ?? 1)
       },
       handleErr,
     )
