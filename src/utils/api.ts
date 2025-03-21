@@ -177,7 +177,7 @@ export const fsArchiveList = (
 export const fsArchiveDecompress = (
   src_dir: string,
   dst_dir: string,
-  name: string,
+  name: string[],
   archive_pass = "",
   inner_path = "/",
   cache_full = true,

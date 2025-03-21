@@ -56,10 +56,10 @@ export const Decompress = () => {
   const getPathAndName = () => {
     let path = pathname()
     if (innerPath() === "/") {
-      return { path: path, name: selectedObjs()[0].name }
+      return { path: path, name: selectedObjs().map((o) => o.name) }
     } else {
       let idx = path.lastIndexOf("/")
-      return { path: path.slice(0, idx), name: path.slice(idx + 1) }
+      return { path: path.slice(0, idx), name: [path.slice(idx + 1)] }
     }
   }
   return (

@@ -28,7 +28,7 @@ import {
   VscodeIconsFileTypePhotoshop2,
 } from "~/components"
 import { SiAsciinema } from "solid-icons/si"
-import { getArchiveExtensions } from "~/store/archive"
+import { isArchive } from "~/store/archive"
 
 const iconMap = {
   "dmg,ipa,plist,tipa": BsApple,
@@ -49,14 +49,14 @@ const iconMap = {
   cast: SiAsciinema,
 }
 
-export const getIconByTypeAndExt = (type: number, ext: string) => {
+export const getIconByTypeAndName = (type: number, name: string) => {
   if (type !== ObjType.FOLDER) {
     for (const [extensions, icon] of Object.entries(iconMap)) {
-      if (extensions.split(",").includes(ext.toLowerCase())) {
+      if (extensions.split(",").includes(ext(name).toLowerCase())) {
         return icon
       }
     }
-    if (getArchiveExtensions().includes(ext)) {
+    if (isArchive(name)) {
       return BsFileEarmarkZipFill
     }
   }
@@ -90,5 +90,5 @@ export const getIconByTypeAndExt = (type: number, ext: string) => {
 }
 
 export const getIconByObj = (obj: Pick<Obj, "type" | "name">) => {
-  return getIconByTypeAndExt(obj.type, ext(obj.name))
+  return getIconByTypeAndName(obj.type, obj.name)
 }

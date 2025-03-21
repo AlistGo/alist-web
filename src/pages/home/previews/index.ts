@@ -4,20 +4,20 @@ import { Obj, ObjType, UserMethods, UserPermissions } from "~/types"
 import { ext } from "~/utils"
 import { generateIframePreview } from "./iframe"
 import { useRouter } from "~/hooks"
-import { getArchiveExtensions } from "~/store/archive"
+import { isArchive } from "~/store/archive"
 
-type Ext = string[] | "*" | (() => string[])
+type Ext = string[] | "*" | ((name: string) => boolean)
 type Prior = boolean | (() => boolean)
 
-const extsContains = (exts: Ext | undefined, ext: string): boolean => {
+const extsContains = (exts: Ext | undefined, name: string): boolean => {
   if (exts === undefined) {
     return false
   } else if (exts === "*") {
     return true
   } else if (typeof exts === "function") {
-    return (exts as () => string[])().includes(ext)
+    return (exts as (name: string) => boolean)(name)
   } else {
-    return (exts as string[]).includes(ext)
+    return (exts as string[]).includes(ext(name).toLowerCase())
   }
 }
 
@@ -129,12 +129,12 @@ const previews: Preview[] = [
   },
   {
     name: "Archive Preview",
-    exts: () => {
+    exts: (name: string) => {
       const index = UserPermissions.findIndex(
         (item) => item === "read_archives",
       )
-      if (!UserMethods.can(me(), index)) return []
-      return getArchiveExtensions()
+      if (!UserMethods.can(me(), index)) return false
+      return isArchive(name)
     },
     component: lazy(() => import("./archive")),
     prior: () => getSettingBool("preview_archives_by_default"),
@@ -157,7 +157,7 @@ export const getPreviews = (
     if (
       preview.type === file.type ||
       (typeOverride && preview.type === typeOverride) ||
-      extsContains(preview.exts, ext(file.name).toLowerCase())
+      extsContains(preview.exts, file.name)
     ) {
       const r = { name: preview.name, component: preview.component }
       if (isPrior(preview.prior)) {
