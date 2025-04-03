@@ -10,7 +10,7 @@ import { type Setting } from "artplayer/types/setting"
 import { type Events } from "artplayer/types/events"
 import artplayerPluginDanmuku from "artplayer-plugin-danmuku"
 import artplayerPluginAss from "~/components/artplayer-plugin-ass"
-import flvjs from "flv.js"
+import mpegts from "mpegts.js"
 import Hls from "hls.js"
 import { currentLang } from "~/app/i18n"
 import { AutoHeightPlugin, VideoBox } from "./video_box"
@@ -46,7 +46,7 @@ const Preview = () => {
     }
   }
   let player: Artplayer
-  let flvPlayer: flvjs.Player
+  let flvPlayer: mpegts.Player
   let hlsPlayer: Hls
   let option: Option = {
     id: pathname(),
@@ -109,7 +109,7 @@ const Preview = () => {
     type: ext(objStore.obj.name),
     customType: {
       flv: function (video: HTMLMediaElement, url: string) {
-        flvPlayer = flvjs.createPlayer(
+        flvPlayer = mpegts.createPlayer(
           {
             type: "flv",
             url: url,
