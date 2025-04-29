@@ -10,7 +10,7 @@ import {
   Icon,
   useColorMode,
 } from "@hope-ui/solid"
-import { Motion } from "@motionone/solid"
+import { Motion } from "solid-motionone"
 import {
   batch,
   createEffect,

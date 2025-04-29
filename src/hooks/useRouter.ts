@@ -15,7 +15,7 @@ const useRouter = () => {
   const location = useLocation()
   const params = useParams()
   const pathname = createMemo(() => {
-    return trimBase(location.pathname)
+    return trimBase(decodeURIComponent(location.pathname))
   })
   return {
     to: (

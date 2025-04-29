@@ -14,7 +14,7 @@ import { pathDir, pathJoin, api, pathResolve } from "~/utils"
 import { createStorageSignal } from "@solid-primitives/storage"
 import { isMobile } from "~/utils/compatibility.js"
 import { useScrollListener } from "~/pages/home/toolbar/BackTop.jsx"
-import { Motion } from "@motionone/solid"
+import { Motion } from "solid-motionone"
 import { getMainColor, me } from "~/store"
 
 type TocItem = { indent: number; text: string; tagName: string; key: string }

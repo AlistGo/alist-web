@@ -10,7 +10,7 @@ import { IoMagnetOutline } from "solid-icons/io"
 import { AiOutlineCloudUpload, AiOutlineSetting } from "solid-icons/ai"
 import { RiSystemRefreshLine } from "solid-icons/ri"
 import { usePath } from "~/hooks"
-import { Motion } from "@motionone/solid"
+import { Motion } from "solid-motionone"
 import { isTocVisible, setTocDisabled } from "~/components"
 import { BiSolidBookContent } from "solid-icons/bi"
 

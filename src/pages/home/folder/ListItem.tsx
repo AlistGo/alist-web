@@ -1,5 +1,5 @@
 import { HStack, Icon, Text } from "@hope-ui/solid"
-import { Motion } from "@motionone/solid"
+import { Motion } from "solid-motionone"
 import { useContextMenu } from "solid-contextmenu"
 import { batch, Show } from "solid-js"
 import { LinkWithPush } from "~/components"
