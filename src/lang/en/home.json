@@ -94,7 +94,7 @@
   "upload": {
     "add_as_task": "Add as task",
     "try_rapid": "Try rapid",
-    "upload-tips": "Drag files here to upload, or click:",
+    "upload-tips": "Drag files here, click buttons below, or paste from clipboard to upload",
     "release": "Release to upload",
     "no_files_drag": "No files were dragged in.",
     "upload_files": "Choose Files",
