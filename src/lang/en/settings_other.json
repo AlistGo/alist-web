@@ -15,5 +15,7 @@
   "pikpak": "PikPak",
   "set_pikpak": "Set PikPak",
   "thunder": "Thunder",
-  "set_thunder": "Set Thunder"
+  "set_thunder": "Set Thunder",
+  "thunder_browser": "ThunderBrowser",
+  "set_thunder_browser": "Set ThunderBrowser"
 }

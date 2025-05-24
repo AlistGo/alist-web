@@ -26,6 +26,7 @@ const OtherSettings = () => {
   const [pan115TempDir, set115TempDir] = createSignal("")
   const [pikpakTempDir, setPikPakTempDir] = createSignal("")
   const [thunderTempDir, setThunderTempDir] = createSignal("")
+  const [thunderBrowserTempDir, setThunderBrowserTempDir] = createSignal("")
   const [token, setToken] = createSignal("")
   const [settings, setSettings] = createSignal<SettingItem[]>([])
   const [settingsLoading, settingsData] = useFetch(
@@ -68,6 +69,12 @@ const OtherSettings = () => {
         temp_dir: thunderTempDir(),
       }),
   )
+  const [setThunderBrowserLoading, setThunderBrowser] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_thunder_browser", {
+        temp_dir: thunderBrowserTempDir(),
+      }),
+  )
   const refresh = async () => {
     const resp = await settingsData()
     handleResp(resp, (data) => {
@@ -90,6 +97,9 @@ const OtherSettings = () => {
       )
       setThunderTempDir(
         data.find((i) => i.key === "thunder_temp_dir")?.value || "",
+      )
+      setThunderBrowserTempDir(
+        data.find((i) => i.key === "thunder_browser_temp_dir")?.value || "",
       )
       setSettings(data)
     })
@@ -245,6 +255,33 @@ const OtherSettings = () => {
         }}
       >
         {t("settings_other.set_thunder")}
+      </Button>
+      <Heading my="$2">{t("settings_other.thunder_browser")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel
+          for="thunder_browser_temp_dir"
+          display="flex"
+          alignItems="center"
+        >
+          {t(`settings.thunder_browser_temp_dir`)}
+        </FormLabel>
+        <FolderChooseInput
+          id="thunder_browser_temp_dir"
+          value={thunderBrowserTempDir()}
+          onChange={(path) => setThunderBrowserTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setThunderBrowserLoading()}
+        onClick={async () => {
+          const resp = await setThunderBrowser()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("settings_other.set_thunder_browser")}
       </Button>
       <Heading my="$2">{t("settings.token")}</Heading>
       <Input value={token()} readOnly />
