@@ -10,5 +10,8 @@
   "clear": "Clear",
   "login": "Login",
   "use_guest": "Browse as a guest",
-  "success": "Login successfully"
+  "success": "Login successfully",
+  "show_password": "Show password",
+  "hide_password": "Hide password",
+  "webauthn_not_supported": "WebAuthn is not supported"
 }

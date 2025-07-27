@@ -44,7 +44,7 @@ import {
 
 const Login = () => {
   const t = useT()
-  useTitle("密码登录")
+  useTitle(t("login.password_login"))
   const bgColor = useColorModeValue("white", "$neutral1")
   const [username, setUsername] = createSignal(
     localStorage.getItem("username") || "",
@@ -285,7 +285,7 @@ const Login = () => {
               <Icon as={FiUser} color="$neutral8" boxSize="$5" />
               <Input
                 name="username"
-                placeholder="请输入账号"
+                placeholder={t("login.username-tips")}
                 value={username()}
                 onInput={(e) => setUsername(e.currentTarget.value)}
                 border="none"
@@ -321,7 +321,7 @@ const Login = () => {
                 <Icon as={FiLock} color="$neutral8" boxSize="$5" />
                 <Input
                   name="password"
-                  placeholder="请输入密码"
+                  placeholder={t("login.password-tips")}
                   type={showPassword() ? "text" : "password"}
                   value={password()}
                   onInput={(e) => setPassword(e.currentTarget.value)}
@@ -350,7 +350,11 @@ const Login = () => {
                   icon={showPassword() ? <FiEyeOff /> : <FiEye />}
                   onClick={() => setShowPassword(!showPassword())}
                   color="$neutral8"
-                  aria-label={showPassword() ? "隐藏密码" : "显示密码"}
+                  aria-label={
+                    showPassword()
+                      ? t("login.hide_password")
+                      : t("login.show_password")
+                  }
                   _hover={{
                     backgroundColor: "$neutral3",
                   }}
