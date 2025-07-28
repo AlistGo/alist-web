@@ -79,6 +79,10 @@ const Role = () => {
     return roleId === 1 || roleId === 2
   }
 
+  const isRoleEdited = (roleId: number) => {
+    return roleId === 2
+  }
+
   return (
     <VStack spacing="$2" alignItems="start" w="$full">
       <HStack spacing="$2">
@@ -112,7 +116,7 @@ const Role = () => {
                   <Td>
                     <HStack spacing="$2">
                       <Button
-                        disabled={isRoleDisabled(role.id)}
+                        disabled={isRoleEdited(role.id)}
                         onClick={() => {
                           to(`/@manage/permissions/edit/${role.id}`)
                         }}
