@@ -90,8 +90,9 @@ const optimizePaths = async (paths: string[]): Promise<string[]> => {
 
   // 获取路径的父路径
   const getParentPath = (path: string): string => {
-    if (path === "/" || !path.includes("/")) return "/"
-    return path.substring(0, path.lastIndexOf("/"))
+    if (path === "/" || !path.includes("/")) return ""
+    const lastSlash = path.lastIndexOf("/")
+    return lastSlash === 0 ? "/" : path.substring(0, lastSlash)
   }
 
   // 第一步：获取所有相关路径的目录结构
