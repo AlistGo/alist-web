@@ -428,6 +428,8 @@
       "v2": "V2"
     },
     "placeholder": "Placeholder",
+    "use_placeholder": "Use placeholder file",
+    "use_placeholder-tips": "When enabled, create a hidden placeholder (such as .alist) to keep empty folders.",
     "region": "Region",
     "remove_bucket": "Remove bucket",
     "remove_bucket-tips": "Remove bucket name from path when using custom host.",
@@ -904,6 +906,8 @@
       "v2": "V2"
     },
     "placeholder": "Placeholder",
+    "use_placeholder": "Use placeholder file",
+    "use_placeholder-tips": "When enabled, create a hidden placeholder (such as .alist) to keep empty folders.",
     "region": "Region",
     "remove_bucket": "Remove bucket",
     "remove_bucket-tips": "Remove bucket name from path when using custom host.",
