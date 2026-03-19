@@ -7,6 +7,7 @@ export * from "./driver_item"
 export * from "./item_type"
 export * from "./meta"
 export * from "./task"
+export * from "./share"
 
 export interface StoreObj {
   name: string

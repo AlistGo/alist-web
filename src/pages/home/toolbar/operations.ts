@@ -26,6 +26,7 @@ export const operations: Operations = {
   s3_archive: { icon: TbSnowflake, color: "$info9" },
   s3_restore: { icon: TbSun, color: "$warning9" },
   copy_link: { icon: TbLink, color: "$info9" },
+  share: { icon: TbLink, color: "$accent9" },
   mkdir: { icon: CgFolderAdd, p: true },
   recursive_move: { icon: ImMoveUp, p: true },
   remove_empty_directory: { icon: HiOutlineFolderRemove, p: true },

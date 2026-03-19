@@ -12,7 +12,7 @@ import {
   lazy,
   Suspense,
 } from "solid-js"
-import { bus, convertURL, notify, joinBase } from "~/utils"
+import { bus, convertURL, notify, joinBase, pathJoin } from "~/utils"
 import { ObjType, UserMethods, UserPermissions } from "~/types"
 import {
   getSettingBool,
@@ -222,6 +222,21 @@ export const ContextMenu = () => {
           </Item>
         </Show>
         <Show when={oneChecked()}>
+          <Item
+            onClick={({ props }) => {
+              const targetPath =
+                props.path && props.path.startsWith("/")
+                  ? props.path
+                  : pathJoin(getCurrentPath(), props.name)
+              bus.emit("share", {
+                path: targetPath,
+                name: props.name,
+                is_dir: props.is_dir,
+              })
+            }}
+          >
+            <ItemContent name="share" />
+          </Item>
           <Item
             onClick={({ props }) => {
               if (props.is_dir) {

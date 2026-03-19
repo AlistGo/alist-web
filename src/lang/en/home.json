@@ -114,6 +114,7 @@
       "extract_header": "Extract {{path}} to..."
     },
     "copy_link": "Copy link",
+    "share": "Share",
     "preview_page": "Preview page",
     "down_link": "Download link",
     "encode_down_link": "Encode download link",
