@@ -8,6 +8,7 @@ const Upload = () => {
   return (
     <TypeTasks
       type="upload"
+      canRetry
       nameAnalyzer={{
         regex: /^upload (.+) to \[(.+)]\((.+)\)$/,
         title: (matches) => matches[1],

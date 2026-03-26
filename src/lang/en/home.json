@@ -167,6 +167,8 @@
     "pending": "Pending",
     "uploading": "Uploading",
     "backending": "Uploading in the backend",
+    "task_id": "Task ID: {{id}}",
+    "open_task_center": "Open task center",
     "success": "Success",
     "error": "Error",
     "back": "Back to Upload",

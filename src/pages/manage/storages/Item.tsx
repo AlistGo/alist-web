@@ -1,4 +1,5 @@
 import {
+  Button,
   Center,
   FormControl,
   FormHelperText,
@@ -9,8 +10,9 @@ import {
   Switch as HopeSwitch,
   Text,
   Textarea,
+  VStack,
 } from "@hope-ui/solid"
-import { Match, Show, Switch } from "solid-js"
+import { For, Match, Show, Switch } from "solid-js"
 import { useT } from "~/hooks"
 import { DriverItem, Type } from "~/types"
 import { FolderChooseInput, SelectOptions } from "~/components"
@@ -21,6 +23,7 @@ export type ItemProps = DriverItem & {
   full_name_path?: string
   options_prefix?: string
   driver?: string
+  additionValues?: Record<string, any>
 } & (
     | {
         type: Type.Bool
@@ -60,7 +63,44 @@ const Item = (props: ItemProps) => {
     props.type === Type.Number &&
     props.driver === "Chunker" &&
     props.name === "chunk_size"
+  const isChunkerRemotePathsField =
+    props.type === Type.Text &&
+    props.driver === "Chunker" &&
+    props.name === "remote_paths"
+  const isChunkerStoreChunksInPrimaryField =
+    props.type === Type.Bool &&
+    props.driver === "Chunker" &&
+    props.name === "store_chunks_in_primary"
   const numberOnChange = props.type === Type.Number ? props.onChange : undefined
+  const chunkerExtraRemotePaths = () =>
+    String(props.additionValues?.remote_paths ?? "")
+      .split("\n")
+      .map((path) => path.trim())
+      .filter(Boolean)
+  const chunkerStoreChunksInPrimaryHint = () => {
+    if (!isChunkerStoreChunksInPrimaryField) {
+      return ""
+    }
+    if (chunkerExtraRemotePaths().length === 0) {
+      return t("drivers.Chunker.store_chunks_in_primary-empty_hint")
+    }
+    return props.value
+      ? t("drivers.Chunker.store_chunks_in_primary-enabled_hint")
+      : t("drivers.Chunker.store_chunks_in_primary-disabled_hint")
+  }
+  const chunkerRemotePathEntries = () => {
+    if (!isChunkerRemotePathsField) {
+      return []
+    }
+    const value = (props.value as string) ?? ""
+    return value === "" ? [""] : value.split("\n")
+  }
+  const updateChunkerRemotePaths = (entries: string[]) => {
+    if (props.type !== Type.Text) {
+      return
+    }
+    props.onChange?.(entries.join("\n"))
+  }
 
   return (
     <FormControl
@@ -163,16 +203,60 @@ const Item = (props: ItemProps) => {
           />
         </Match>
         <Match when={props.type === Type.Text}>
-          <Textarea
-            id={props.name}
-            readOnly={props.readonly}
-            value={props.value as string}
-            onChange={
-              props.type === Type.Text
-                ? (e) => props.onChange?.(e.currentTarget.value)
-                : undefined
+          <Show
+            when={isChunkerRemotePathsField}
+            fallback={
+              <Textarea
+                id={props.name}
+                readOnly={props.readonly}
+                value={props.value as string}
+                onChange={
+                  props.type === Type.Text
+                    ? (e) => props.onChange?.(e.currentTarget.value)
+                    : undefined
+                }
+              />
             }
-          />
+          >
+            <VStack w="$full" alignItems="stretch" spacing="$2">
+              <For each={chunkerRemotePathEntries()}>
+                {(entry, index) => (
+                  <HStack w="$full" alignItems="flex-start" spacing="$2">
+                    <FolderChooseInput
+                      id={index() === 0 ? props.name : undefined}
+                      value={entry}
+                      onChange={(value) => {
+                        const next = [...chunkerRemotePathEntries()]
+                        next[index()] = value
+                        updateChunkerRemotePaths(next)
+                      }}
+                    />
+                    <Button
+                      colorScheme="danger"
+                      variant="subtle"
+                      onClick={() => {
+                        const next = [...chunkerRemotePathEntries()]
+                        next.splice(index(), 1)
+                        updateChunkerRemotePaths(next)
+                      }}
+                      disabled={props.readonly}
+                    >
+                      {t("global.delete")}
+                    </Button>
+                  </HStack>
+                )}
+              </For>
+              <Button
+                variant="subtle"
+                onClick={() => {
+                  updateChunkerRemotePaths([...chunkerRemotePathEntries(), ""])
+                }}
+                disabled={props.readonly}
+              >
+                {t("global.add")}
+              </Button>
+            </VStack>
+          </Show>
         </Match>
         <Match when={props.type === Type.Select}>
           <Select
@@ -216,6 +300,9 @@ const Item = (props: ItemProps) => {
             props.value as number,
           )})`}
         </FormHelperText>
+      </Show>
+      <Show when={chunkerStoreChunksInPrimaryHint()}>
+        <FormHelperText>{chunkerStoreChunksInPrimaryHint()}</FormHelperText>
       </Show>
     </FormControl>
   )
