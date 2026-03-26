@@ -381,6 +381,27 @@
     "root_folder_path": "Root folder path",
     "username": "Username"
   },
+  "Chunker": {
+    "chunk_size": "Chunk size",
+    "chunk_size-tips": "Files larger than this will be split into chunks. Input in MB; it will be stored in bytes.",
+    "hash_type": "Hash type",
+    "hash_types": {
+      "md5": "MD5",
+      "none": "None",
+      "sha1": "SHA1"
+    },
+    "meta_format": "Metadata format",
+    "meta_formats": {
+      "none": "None",
+      "simplejson": "Simple JSON"
+    },
+    "name_format": "Name format",
+    "name_format-tips": "Compatible with rclone chunker naming",
+    "remote_path": "Remote path",
+    "remote_path-tips": "AList mounted folder path used to store chunked data, e.g. /my-storage/chunks",
+    "start_from": "Start from",
+    "start_from-tips": "Chunk number base, usually 0 or 1"
+  },
   "Crypt": {
     "directory_name_encryption": "Directory name encryption",
     "directory_name_encryptions": {
@@ -405,7 +426,7 @@
     "password": "Password",
     "password-tips": "the main password",
     "remote_path": "Remote path",
-    "remote_path-tips": "This is where the encrypted data stores",
+    "remote_path-tips": "AList mounted folder path used to store encrypted data, e.g. /my-storage/secret",
     "salt": "Salt",
     "salt-tips": "If you don't know what is salt, treat it as a second password. Optional but recommended",
     "show_hidden": "Show hidden",
@@ -1457,6 +1478,7 @@
     "ChaoXingGroupDrive": "ChaoXingGroupDrive",
     "Cloudreve": "Cloudreve",
     "Cloudreve V4": "Cloudreve V4",
+    "Chunker": "Chunker",
     "Crypt": "Crypt",
     "Doge": "Doge",
     "Doubao": "Doubao",

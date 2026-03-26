@@ -3,15 +3,18 @@ import {
   FormControl,
   FormHelperText,
   FormLabel,
+  HStack,
   Input,
   Select,
   Switch as HopeSwitch,
+  Text,
   Textarea,
 } from "@hope-ui/solid"
 import { Match, Show, Switch } from "solid-js"
 import { useT } from "~/hooks"
 import { DriverItem, Type } from "~/types"
-import { SelectOptions } from "~/components"
+import { FolderChooseInput, SelectOptions } from "~/components"
+import { getFileSize } from "~/utils"
 
 export type ItemProps = DriverItem & {
   readonly?: boolean
@@ -49,6 +52,16 @@ export type ItemProps = DriverItem & {
 
 const Item = (props: ItemProps) => {
   const t = useT()
+  const isFolderPathField =
+    props.type === Type.String &&
+    !props.readonly &&
+    (props.name === "root_folder_path" || props.name === "remote_path")
+  const isChunkSizeField =
+    props.type === Type.Number &&
+    props.driver === "Chunker" &&
+    props.name === "chunk_size"
+  const numberOnChange = props.type === Type.Number ? props.onChange : undefined
+
   return (
     <FormControl
       w="$full"
@@ -64,6 +77,17 @@ const Item = (props: ItemProps) => {
         )}
       </FormLabel>
       <Switch fallback={<Center>{t("settings.unknown_type")}</Center>}>
+        <Match when={isFolderPathField}>
+          <FolderChooseInput
+            id={props.name}
+            value={props.value as string}
+            onChange={(value) => {
+              if (props.type === Type.String) {
+                props.onChange?.(value)
+              }
+            }}
+          />
+        </Match>
         <Match when={props.type === Type.String}>
           <Input
             id={props.name}
@@ -78,17 +102,40 @@ const Item = (props: ItemProps) => {
           />
         </Match>
         <Match when={props.type === Type.Number}>
-          <Input
-            type="number"
-            id={props.name}
-            readOnly={props.readonly}
-            value={props.value as number}
-            onInput={
-              props.type === Type.Number
-                ? (e) => props.onChange?.(parseInt(e.currentTarget.value))
-                : undefined
+          <Show
+            when={isChunkSizeField}
+            fallback={
+              <Input
+                type="number"
+                id={props.name}
+                readOnly={props.readonly}
+                value={props.value as number}
+                onInput={
+                  props.type === Type.Number
+                    ? (e) => props.onChange?.(parseInt(e.currentTarget.value))
+                    : undefined
+                }
+              />
             }
-          />
+          >
+            <HStack w="$full" spacing="$2">
+              <Input
+                type="number"
+                id={props.name}
+                readOnly={props.readonly}
+                value={((props.value as number) / (1024 * 1024)).toString()}
+                onInput={(e) => {
+                  const mb = parseFloat(e.currentTarget.value)
+                  numberOnChange?.(
+                    Number.isFinite(mb) ? Math.round(mb * 1024 * 1024) : 0,
+                  )
+                }}
+              />
+              <Text minW="3rem" textAlign="right">
+                MB
+              </Text>
+            </HStack>
+          </Show>
         </Match>
         <Match when={props.type === Type.Float}>
           <Input
@@ -161,6 +208,13 @@ const Item = (props: ItemProps) => {
               ? `storages.common.${props.name}-tips`
               : `drivers.${props.driver}.${props.name}-tips`,
           )}
+        </FormHelperText>
+      </Show>
+      <Show when={isChunkSizeField}>
+        <FormHelperText>
+          {`${(props.value as number).toLocaleString()} bytes (${getFileSize(
+            props.value as number,
+          )})`}
         </FormHelperText>
       </Show>
     </FormControl>
