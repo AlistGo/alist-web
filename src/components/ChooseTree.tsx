@@ -105,88 +105,28 @@ interface FolderTreeNodeProps {
 }
 
 // 修改 getNodeState 函数
+const isSamePath = (left: string[], right: string[]) =>
+  left.length === right.length &&
+  left.every((segment, index) => segment === right[index])
+
+const isAncestorPath = (ancestor: string[], target: string[]) =>
+  ancestor.length < target.length &&
+  ancestor.every((segment, index) => segment === target[index])
+
 const getNodeState = (
   segments: string[],
   selectedPaths: string[][],
-  childrenNodes: Obj[] | undefined,
 ): { checked: boolean; indeterminate: boolean } => {
-  const currentPath = segments.join("/")
-  console.log("计算节点状态:", {
-    当前路径: currentPath,
-    选中路径: selectedPaths,
-    子节点: childrenNodes,
-  })
-
-  // 检查当前路径是否被选中
-  const isDirectlySelected = selectedPaths.some((path) => {
-    const selectedPath = path.join("/")
-    const isSelected = selectedPath === currentPath
-    if (isSelected) {
-      console.log("节点直接选中:", currentPath)
-    }
-    return isSelected
-  })
-
-  if (isDirectlySelected) {
+  const checked = selectedPaths.some((path) => isSamePath(path, segments))
+  if (checked) {
     return { checked: true, indeterminate: false }
   }
 
-  // 检查是否有子节点被选中
-  if (!childrenNodes?.length) {
-    // 检查是否是选中路径的父节点
-    const isParentOfSelected = selectedPaths.some((path) => {
-      const selectedPath = path.join("/")
-      return selectedPath.startsWith(currentPath + "/")
-    })
+  const indeterminate = selectedPaths.some((path) =>
+    isAncestorPath(segments, path),
+  )
 
-    if (isParentOfSelected) {
-      console.log("是选中路径的父节点:", currentPath)
-      return { checked: false, indeterminate: true }
-    }
-
-    return { checked: false, indeterminate: false }
-  }
-
-  // 计算子节点的选中状态
-  let selectedCount = 0
-  let hasIndeterminate = false
-
-  childrenNodes.forEach((child) => {
-    const childPath = [...segments, child.name]
-    const childPathStr = childPath.join("/")
-
-    // 检查直接选中
-    const isSelected = selectedPaths.some(
-      (path) => path.join("/") === childPathStr,
-    )
-
-    // 检查是否是选中路径的父节点
-    const isParentOfSelected = selectedPaths.some((path) => {
-      const selectedPath = path.join("/")
-      return selectedPath.startsWith(childPathStr + "/")
-    })
-
-    if (isSelected) {
-      selectedCount++
-    } else if (isParentOfSelected) {
-      hasIndeterminate = true
-    }
-  })
-
-  console.log("子节点状态:", {
-    路径: currentPath,
-    选中数: selectedCount,
-    总数: childrenNodes.length,
-    有半选: hasIndeterminate,
-  })
-
-  if (selectedCount === childrenNodes.length) {
-    return { checked: true, indeterminate: false }
-  } else if (selectedCount > 0 || hasIndeterminate) {
-    return { checked: false, indeterminate: true }
-  }
-
-  return { checked: false, indeterminate: false }
+  return { checked: false, indeterminate }
 }
 
 // 获取所有子节点路径（包括子节点的子节点）
@@ -231,48 +171,14 @@ const FolderTreeNode = (props: FolderTreeNodeProps) => {
   const nodeState = createMemo(() => {
     if (!selectedPaths || !selectedPaths())
       return { checked: false, indeterminate: false }
-    const state = getNodeState(props.segments, selectedPaths(), children())
-    console.log("节点状态计算:", {
-      path: props.segments.join("/"),
-      state,
-      selectedPaths: selectedPaths(),
-      children: children(),
-    })
-    return state
+    return getNodeState(props.segments, selectedPaths())
   })
 
   // 修改 hasSelectedChildren 函数
   const hasSelectedChildren = createMemo(() => {
     if (!selectedPaths || !selectedPaths()) return false
     const paths = selectedPaths()
-    const currentPath = props.segments.join("/")
-
-    // 检查是否有直接子节点被选中
-    const hasDirectChild = paths.some((path) => {
-      const pathStr = path.join("/")
-      if (currentPath === "") {
-        return path.length === 1
-      }
-      return (
-        pathStr.startsWith(currentPath + "/") &&
-        pathStr.split("/").length === currentPath.split("/").length + 1
-      )
-    })
-
-    // 检查是否有更深层的节点被选中
-    const hasDeepChild = paths.some((path) => {
-      const pathStr = path.join("/")
-      return pathStr.startsWith(currentPath + "/")
-    })
-
-    console.log("检查选中子节点:", {
-      当前路径: currentPath,
-      有直接子节点: hasDirectChild,
-      有深层子节点: hasDeepChild,
-      选中路径: paths,
-    })
-
-    return hasDirectChild || hasDeepChild
+    return paths.some((path) => isAncestorPath(props.segments, path))
   })
 
   // 统一的节点点击处理函数
@@ -280,28 +186,8 @@ const FolderTreeNode = (props: FolderTreeNodeProps) => {
     e.stopPropagation()
 
     if (multiSelect && onSelect) {
-      // 获取当前节点的选中状态
       const currentChecked = !nodeState().checked
-
-      // 获取所有子节点路径
-      let childPaths: string[][] = []
-      if (children()) {
-        // 如果子节点已加载，直接使用
-        childPaths = children()!.map((item) => [...segments, item.name])
-      } else {
-        // 如果子节点未加载，加载子节点
-        try {
-          const resp = await fsDirs("/" + segments.join("/"), password(), true)
-          if (resp.code === 200) {
-            childPaths = resp.data.map((item: Obj) => [...segments, item.name])
-          }
-        } catch (error) {
-          console.error("获取子节点失败:", error)
-        }
-      }
-
-      // 调用 onSelect 处理选中状态
-      onSelect(segments, currentChecked, childPaths)
+      onSelect(segments, currentChecked)
     } else {
       onChange("/" + segments.join("/"))
     }
@@ -578,43 +464,6 @@ interface FolderTreeContext {
 }
 
 // 修改 handleSelect 函数
-const handleSelect = async (
-  segments: string[],
-  checked: boolean,
-  selectedPaths: Accessor<string[][]>,
-  displaySelectedPaths: Accessor<string[][]>,
-  setSelectedPaths: (paths: string[][]) => void,
-  setDisplaySelectedPaths: (paths: string[][]) => void,
-  onChange: (paths: string[][]) => void,
-) => {
-  console.log("\n========== 选择处理开始 ==========")
-  console.log("当前选中的路径段:", segments)
-  console.log("当前所有选中路径:", selectedPaths())
-
-  let newPaths = [...selectedPaths()]
-
-  if (checked) {
-    // 只添加当前节点
-    newPaths.push([...segments])
-  } else {
-    // 只移除当前节点
-    newPaths = newPaths.filter((path) => path.join("/") !== segments.join("/"))
-  }
-
-  // 确保路径的唯一性
-  const uniquePaths = newPaths.filter(
-    (path, index, self) =>
-      index === self.findIndex((p) => p.join("/") === path.join("/")),
-  )
-
-  console.log("最终路径:", uniquePaths)
-  console.log("========== 选择处理结束 ==========\n")
-
-  setSelectedPaths(uniquePaths)
-  setDisplaySelectedPaths(uniquePaths)
-  onChange(uniquePaths)
-}
-
 const context = createContext<FolderTreeContext>()
 
 // 修改 FolderTree 组件
@@ -789,65 +638,31 @@ export const ChooseTree = (props: ChooseTreeProps) => {
   })
 
   // 包装 handleSelect 函数
-  const wrappedHandleSelect = async (
-    segments: string[],
-    checked: boolean,
-    childPaths?: string[][],
-  ) => {
-    console.log("选择处理开始:", {
-      segments,
-      checked,
-      childPaths,
-      当前选中: selectedPaths(),
-      当前显示: displaySelectedPaths(),
-    })
-
+  const wrappedHandleSelect = async (segments: string[], checked: boolean) => {
     let newPaths = [...selectedPaths()]
-    const currentPath = segments.join("/")
 
     if (checked) {
-      // 如果是根节点，只添加根路径，不添加子路径
       if (segments.length === 0) {
-        // 清空所有选择，只保留根路径
         newPaths = [[]]
       } else {
-        // 添加当前路径（非根节点）
-        if (!newPaths.some((path) => path.join("/") === currentPath)) {
-          newPaths.push(segments)
-        }
-        // 如果有子路径，添加所有子路径
-        if (childPaths) {
-          childPaths.forEach((childPath) => {
-            if (
-              !newPaths.some((path) => path.join("/") === childPath.join("/"))
-            ) {
-              newPaths.push(childPath)
-            }
-          })
-        }
+        newPaths = newPaths.filter(
+          (path) =>
+            !isSamePath(path, []) &&
+            !isSamePath(path, segments) &&
+            !isAncestorPath(path, segments) &&
+            !isAncestorPath(segments, path),
+        )
+        newPaths.push([...segments])
       }
     } else {
-      // 如果是根节点，清空所有选择
-      if (segments.length === 0) {
-        newPaths = []
-      } else {
-        // 移除当前路径及其所有子路径
-        newPaths = newPaths.filter((path) => {
-          const pathStr = path.join("/")
-          // 保留不是当前路径且不是当前路径子路径的路径
-          return (
-            pathStr !== currentPath && !pathStr.startsWith(currentPath + "/")
-          )
-        })
-      }
+      newPaths = newPaths.filter(
+        (path) =>
+          !isSamePath(path, segments) && !isAncestorPath(segments, path),
+      )
     }
 
-    // 更新实际保存的路径
     setSelectedPaths(newPaths)
-    // 显示路径与实际路径保持一致
     setDisplaySelectedPaths(newPaths)
-
-    // 提交更新后的路径
     props.onChange(
       newPaths.map((path) => (path.length === 0 ? "/" : "/" + path.join("/"))),
     )

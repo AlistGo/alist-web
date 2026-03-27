@@ -63,6 +63,12 @@ export const clearHistory = (path: string, page?: number) => {
   }
 }
 
+export const clearAllHistory = () => {
+  if (HistoryMap.size === 0) return
+  HistoryMap.clear()
+  console.log("clear all history")
+}
+
 document.addEventListener(
   "click",
   (e) => {

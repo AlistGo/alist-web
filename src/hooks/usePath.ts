@@ -255,7 +255,7 @@ export const usePath = () => {
       return Promise.resolve()
     }
 
-    if (hasHistory(path, index)) {
+    if (!force && hasHistory(path, index)) {
       return recoverHistory(path, index)
     }
 
