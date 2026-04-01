@@ -49,6 +49,50 @@ export function formatDate(dateStr: string) {
   )
 }
 
+export function toDateTimeLocalValue(dateStr?: string | null) {
+  if (!dateStr) return ""
+
+  const date = new Date(dateStr)
+  if (Number.isNaN(date.getTime())) {
+    return ""
+  }
+
+  const year = date.getFullYear()
+  const mon = date.getMonth() + 1
+  const day = date.getDate()
+  const hour = date.getHours()
+  const min = date.getMinutes()
+  const sec = date.getSeconds()
+
+  return (
+    year +
+    "-" +
+    full(mon) +
+    "-" +
+    full(day) +
+    "T" +
+    full(hour) +
+    ":" +
+    full(min) +
+    ":" +
+    full(sec)
+  )
+}
+
+export function dateTimeLocalToISOString(value: string) {
+  const trimmed = value.trim()
+  if (!trimmed) {
+    return ""
+  }
+
+  const date = new Date(trimmed)
+  if (Number.isNaN(date.getTime())) {
+    return ""
+  }
+
+  return date.toISOString()
+}
+
 export type ConvertURLArgs = {
   raw_url: string
   name: string

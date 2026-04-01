@@ -25,6 +25,7 @@ import { joinBase } from "~/utils"
 import { Group, UserRole } from "~/types"
 import { FaSolidBook, FaSolidDatabase } from "solid-icons/fa"
 import { TbArchive, TbDevices2 } from "solid-icons/tb"
+import { TbLink } from "solid-icons/tb"
 import { FaSolidUserGear } from "solid-icons/fa"
 import { BiRegularMessageAltDetail } from "solid-icons/bi"
 import { RiCommunicationChatSettingsLine } from "solid-icons/ri"
@@ -174,6 +175,13 @@ export const side_menu_items: SideMenuItem[] = [
         role: UserRole.GENERAL,
         component: lazy(() => import("./tasks/Decompress")),
       },
+      {
+        title: "manage.sidemenu.s3_transition",
+        icon: BsBucket,
+        to: "/@manage/tasks/s3_transition",
+        role: UserRole.GENERAL,
+        component: lazy(() => import("./tasks/S3Transition")),
+      },
     ],
   },
   // {
@@ -258,6 +266,13 @@ export const side_menu_items: SideMenuItem[] = [
         component: lazy(() => import("./session/management")),
       },
     ],
+  },
+  {
+    title: "manage.sidemenu.shares",
+    icon: TbLink,
+    to: "/@manage/shares",
+    role: UserRole.GENERAL,
+    component: lazy(() => import("./shares")),
   },
   {
     title: "manage.sidemenu.storages",

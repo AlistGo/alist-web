@@ -21,7 +21,13 @@ import {
   selectedObjs,
 } from "~/store"
 import { ObjType, StoreObj, Obj } from "~/types"
-import { bus, formatDate, getFileSize, hoverColor } from "~/utils"
+import {
+  bus,
+  formatDate,
+  getFileSize,
+  hoverColor,
+  normalizeStorageClass,
+} from "~/utils"
 import { getIconByObj } from "~/utils/icon"
 import { ItemCheckbox, useSelectWithMouse } from "./helper"
 import { me } from "~/store"
@@ -100,7 +106,45 @@ export const ListItem = (props: { obj: StoreObj & Obj; index: number }) => {
   const { pushHref, to, pathname } = useRouter()
   const { openWithDoubleClick, toggleWithClick, restoreSelectionCache } =
     useSelectWithMouse()
+  const t = useT()
   const filenameStyle = () => local["list_item_filename_overflow"]
+  const storageClassKey = createMemo(() =>
+    normalizeStorageClass(props.obj.storage_class),
+  )
+  const storageClassLabel = createMemo(() => {
+    const key = storageClassKey()
+    return key ? t(`home.storage_class.${key}`) : undefined
+  })
+  const filenameContainerStyle = () => {
+    const style = filenameStyle()
+    if (style === "ellipsis") {
+      return {
+        display: "inline-block",
+        "white-space": "nowrap",
+        overflow: "hidden",
+        "text-overflow": "ellipsis",
+        flex: "1 1 auto",
+        "min-width": 0,
+      }
+    }
+    if (style === "scrollable") {
+      return {
+        display: "inline-block",
+        "white-space": "nowrap",
+        overflow: "hidden",
+        flex: "1 1 auto",
+        "min-width": 0,
+      }
+    }
+    return {
+      display: "block",
+      "white-space": "normal",
+      "word-break": "break-word",
+      "line-height": "1.4",
+      flex: "1 1 auto",
+      "min-width": 0,
+    }
+  }
 
   // 构建完整路径
   const getFullPath = () => {
@@ -220,67 +264,75 @@ export const ListItem = (props: { obj: StoreObj & Obj; index: number }) => {
                   flex: 1,
                   minWidth: 0,
                   cursor: "pointer",
-                  ...(filenameStyle() === "ellipsis" && {
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                  }),
-                  ...(filenameStyle() === "scrollable" && {
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                  }),
-                  ...(filenameStyle() === "multi_line" && {
-                    whiteSpace: "normal",
-                    wordBreak: "break-word",
-                    lineHeight: "1.4",
-                  }),
+                  display: "flex",
+                  "align-items": "center",
+                  gap: "0.5rem",
                 }}
+                style={{ "flex-wrap": "wrap" }}
                 title={props.obj.name}
               >
-                <Show when={filenameStyle() === "scrollable"}>
-                  <div
-                    ref={(el) => {
-                      if (el) {
-                        onMount(() => {
-                          const checkWidth = () => {
-                            const parent = el.parentElement
-                            if (parent && el.scrollWidth > parent.clientWidth) {
-                              el.classList.add("should-marquee")
-                            } else {
-                              el.classList.remove("should-marquee")
+                <span class="filename-content" style={filenameContainerStyle()}>
+                  <Show when={filenameStyle() === "scrollable"}>
+                    <div
+                      ref={(el) => {
+                        if (el) {
+                          onMount(() => {
+                            const checkWidth = () => {
+                              const parent = el.parentElement
+                              if (
+                                parent &&
+                                el.scrollWidth > parent.clientWidth
+                              ) {
+                                el.classList.add("should-marquee")
+                              } else {
+                                el.classList.remove("should-marquee")
+                              }
                             }
-                          }
-                          checkWidth()
-                          // 监听窗口大小变化，重新检查是否需要滚动
-                          window.addEventListener("resize", checkWidth)
-                          onCleanup(() => {
-                            window.removeEventListener("resize", checkWidth)
+                            checkWidth()
+                            // 监听窗口大小变化，重新检查是否需要滚动
+                            window.addEventListener("resize", checkWidth)
+                            onCleanup(() => {
+                              window.removeEventListener("resize", checkWidth)
+                            })
                           })
-                        })
+                        }
+                      }}
+                      style={{
+                        display: "inline-block",
+                        "white-space": "nowrap",
+                        "padding-right": "50px",
+                      }}
+                    >
+                      {props.obj.name}
+                    </div>
+                    <style>
+                      {`
+                      .should-marquee:hover {
+                        animation: marquee 8s linear infinite;
                       }
-                    }}
-                    style={{
-                      display: "inline-block",
-                      "white-space": "nowrap",
-                      "padding-right": "50px",
+                      @keyframes marquee {
+                        0% { transform: translateX(0); }
+                        100% { transform: translateX(calc(-100% + ${cols[0].w["@initial"]})); }
+                      }
+                      `}
+                    </style>
+                  </Show>
+                  <Show when={filenameStyle() !== "scrollable"}>
+                    {props.obj.name}
+                  </Show>
+                </span>
+                <Show when={storageClassLabel()}>
+                  <Badge
+                    variant="subtle"
+                    colorScheme="primary"
+                    textTransform="none"
+                    css={{
+                      "flex-shrink": 0,
+                      "font-size": "0.65rem",
                     }}
                   >
-                    {props.obj.name}
-                  </div>
-                  <style>
-                    {`
-                    .should-marquee:hover {
-                      animation: marquee 8s linear infinite;
-                    }
-                    @keyframes marquee {
-                      0% { transform: translateX(0); }
-                      100% { transform: translateX(calc(-100% + ${cols[0].w["@initial"]})); }
-                    }
-                    `}
-                  </style>
-                </Show>
-                <Show when={filenameStyle() !== "scrollable"}>
-                  {props.obj.name}
+                    {storageClassLabel()}
+                  </Badge>
                 </Show>
               </Text>
             </HStack>

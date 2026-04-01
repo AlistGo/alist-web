@@ -1,6 +1,8 @@
 import axios, { Canceler } from "axios"
 import {
   appendObjs,
+  DEFAULT_PAGE_SIZE,
+  MAX_PAGE_SIZE,
   password,
   ObjStore,
   State,
@@ -25,11 +27,13 @@ import { useRouter } from "./useRouter"
 
 let first_fetch = true
 
-let cancelObj: Canceler
-let cancelList: Canceler
+let cancelObj: Canceler | undefined
+let cancelList: Canceler | undefined
 
 const IsDirRecord: Record<string, boolean> = {}
 let globalPage = 1
+let globalHasMore = false
+let globalHasMoreKnown = false
 export const getGlobalPage = () => {
   return globalPage
 }
@@ -42,6 +46,69 @@ export const resetGlobalPage = () => {
 }
 export const usePath = () => {
   const { pathname, to, searchParams } = useRouter()
+  const perfEnabled = import.meta.env.DEV
+
+  const cancelPendingObj = (reason: string) => {
+    if (cancelObj) {
+      cancelObj(reason)
+      cancelObj = undefined
+    }
+  }
+
+  const cancelPendingList = (reason: string) => {
+    if (cancelList) {
+      cancelList(reason)
+      cancelList = undefined
+    }
+  }
+
+  const perPageFromQuery = () => {
+    const value = parseInt(searchParams["per_page"] || "", 10)
+    if (Number.isFinite(value) && value > 0) {
+      return value
+    }
+    return undefined
+  }
+
+  const clampPerPage = (size?: number) => {
+    const querySize = perPageFromQuery()
+    const raw =
+      typeof size === "number" && Number.isFinite(size)
+        ? size
+        : pagination.type === "pagination"
+          ? querySize ?? pagination.size
+          : pagination.size
+    const fallback = raw || DEFAULT_PAGE_SIZE
+    return Math.min(MAX_PAGE_SIZE, Math.max(1, fallback))
+  }
+
+  const logListRenderPerf = (
+    path: string,
+    page: number,
+    perPage: number,
+    append: boolean,
+    hasMore: boolean,
+    networkMs: number,
+    responseCount: number,
+  ) => {
+    if (!perfEnabled) return
+    const renderStart = performance.now()
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        log("[perf][usePath] fs/list render", {
+          path,
+          page,
+          per_page: perPage,
+          append,
+          has_more: hasMore,
+          network_ms: Number(networkMs.toFixed(2)),
+          render_ms: Number((performance.now() - renderStart).toFixed(2)),
+          received_items: responseCount,
+          rendered_items: objStore.objs.length,
+        })
+      })
+    })
+  }
 
   // 统一的路径处理函数
   const getProcessedPath = (path: string): string => {
@@ -145,9 +212,14 @@ export const usePath = () => {
     index?: number,
     rp?: boolean,
     force?: boolean,
+    size?: number,
   ) => {
     retry_pass = rp ?? false
     ObjStore.setErr("")
+    cancelPendingObj(`path change: ${path}`)
+    cancelPendingList(`path change: ${path}`)
+    globalHasMore = false
+    globalHasMoreKnown = false
 
     if (first_fetch) {
       first_fetch = false
@@ -157,7 +229,7 @@ export const usePath = () => {
     if (path === "/") {
       // 如果有权限路径是"/"，直接获取文件列表
       if (userPermissions.some((perm) => perm.path === "/")) {
-        return handleFolder("/", index, undefined, undefined, force)
+        return handleFolder("/", index, size, undefined, force)
       }
       // 否则显示权限目录列表
       if (userPermissions.length > 0) {
@@ -183,23 +255,34 @@ export const usePath = () => {
       return Promise.resolve()
     }
 
-    if (hasHistory(path, index)) {
+    if (!force && hasHistory(path, index)) {
       return recoverHistory(path, index)
     }
 
     // 检查路径是否已知为目录
     if (IsDirRecord[path]) {
-      return handleFolder(path, index, undefined, undefined, force)
+      return handleFolder(path, index, size, undefined, force)
     }
 
     // 如果不知道是文件还是目录，先调用fsget接口判断
-    return handleObj(path, index)
+    return handleObj(path, index, size)
   }
 
   // handle enter obj that don't know if it is dir or file
-  const handleObj = async (path: string, index?: number) => {
+  const handleObj = async (path: string, index?: number, size?: number) => {
+    cancelPendingObj(`new fs/get: ${path}`)
     ObjStore.setState(State.FetchingObj)
+    const requestStart = performance.now()
     const resp = await getObj(path)
+    if (perfEnabled) {
+      log("[perf][usePath] fs/get network", {
+        path,
+        network_ms: Number((performance.now() - requestStart).toFixed(2)),
+      })
+    }
+    if (resp.code === -1) {
+      return
+    }
     handleRespWithoutNotify(
       resp,
       (data) => {
@@ -207,7 +290,7 @@ export const usePath = () => {
         ObjStore.setProvider(data.provider)
         if (data.is_dir) {
           setPathAs(path)
-          handleFolder(path, index)
+          handleFolder(path, index, size)
         } else {
           ObjStore.setReadme(data.readme)
           ObjStore.setHeader(data.header)
@@ -228,24 +311,67 @@ export const usePath = () => {
     append = false,
     force?: boolean,
   ) => {
-    if (!size) {
-      size = pagination.size
-    }
-    if (size !== undefined && pagination.type === "all") {
-      size = undefined
-    }
+    const requestPage = index && index > 0 ? index : 1
+    const requestPerPage = clampPerPage(size)
+    cancelPendingList(`new fs/list: ${path}`)
     ObjStore.setState(append ? State.FetchingMore : State.FetchingObjs)
-    const resp = await getObjs({ path, index, size, force })
+    const requestStart = performance.now()
+    const resp = await getObjs({
+      path,
+      index: requestPage,
+      size: requestPerPage,
+      force,
+    })
+    const networkMs = performance.now() - requestStart
+    if (perfEnabled) {
+      log("[perf][usePath] fs/list network", {
+        path,
+        append,
+        page: requestPage,
+        per_page: requestPerPage,
+        network_ms: Number(networkMs.toFixed(2)),
+      })
+    }
+    if (resp.code === -1) {
+      return
+    }
     handleRespWithoutNotify(
       resp,
       (data) => {
-        setGlobalPage(index ?? 1)
+        const responsePage =
+          typeof data.page === "number" && data.page > 0
+            ? data.page
+            : requestPage
+        const responsePerPage =
+          typeof data.per_page === "number" && data.per_page > 0
+            ? data.per_page
+            : requestPerPage
+        const filteredTotal = data.filtered_total ?? data.total ?? 0
+        const hasMore =
+          typeof data.has_more === "boolean"
+            ? data.has_more
+            : responsePage * responsePerPage < filteredTotal
+        globalHasMore = hasMore
+        globalHasMoreKnown = true
+        if (perfEnabled) {
+          log("[perf][usePath] fs/list payload", {
+            path,
+            page: responsePage,
+            per_page: responsePerPage,
+            append,
+            has_more: hasMore,
+            received_items: data.content?.length ?? 0,
+            total: data.total,
+            filtered_total: filteredTotal,
+          })
+        }
+        setGlobalPage(responsePage)
         if (append) {
           appendObjs(data.content)
         } else {
           ObjStore.setObjs(data.content ?? [])
-          ObjStore.setTotal(data.total)
         }
+        ObjStore.setTotal(filteredTotal)
         ObjStore.setReadme(data.readme)
         ObjStore.setHeader(data.header)
         ObjStore.setWrite(data.write)
@@ -253,12 +379,24 @@ export const usePath = () => {
         // 设置路径为目录
         setPathAs(path)
         ObjStore.setState(State.Folder)
+        logListRenderPerf(
+          path,
+          responsePage,
+          responsePerPage,
+          append,
+          hasMore,
+          networkMs,
+          data.content?.length ?? 0,
+        )
       },
       handleErr,
     )
   }
 
   const handleErr = (msg: string, code?: number) => {
+    if (code === -1) {
+      return
+    }
     const currentPath = pathname()
     const userPermissions = me().permissions || []
     // 如果是403权限错误，返回到根目录并显示权限目录
@@ -347,6 +485,9 @@ export const usePath = () => {
   }
 
   const loadMore = () => {
+    if (!globalHasMoreKnown || !globalHasMore) {
+      return Promise.resolve()
+    }
     return handleFolder(pathname(), globalPage + 1, undefined, true)
   }
   return {
@@ -354,24 +495,22 @@ export const usePath = () => {
     setPathAs: setPathAs,
     refresh: async (retry_pass?: boolean, force?: boolean) => {
       const path = pathname()
-      const scroll = window.scrollY
+      cancelPendingObj(`refresh: ${path}`)
+      cancelPendingList(`refresh: ${path}`)
       clearHistory(path, globalPage)
-      if (
-        pagination.type === "load_more" ||
-        pagination.type === "auto_load_more"
-      ) {
-        const page = globalPage
-        resetGlobalPage()
-        await handlePathChange(path, globalPage, retry_pass, force)
-        while (globalPage < page) {
-          await loadMore()
-        }
-      } else {
-        await handlePathChange(path, globalPage, retry_pass, force)
-      }
-      window.scroll({ top: scroll, behavior: "smooth" })
+      globalHasMore = false
+      globalHasMoreKnown = false
+      resetGlobalPage()
+      ObjStore.setObjs([])
+      ObjStore.setTotal(0)
+      const perPage = clampPerPage()
+      await handlePathChange(path, 1, retry_pass, force ?? true, perPage)
+      window.scroll({ top: 0, behavior: "smooth" })
     },
     loadMore: loadMore,
-    allLoaded: () => globalPage >= Math.ceil(objStore.total / pagination.size),
+    allLoaded: () =>
+      globalHasMoreKnown
+        ? !globalHasMore
+        : globalPage >= Math.ceil(objStore.total / pagination.size),
   }
 }

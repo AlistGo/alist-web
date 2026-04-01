@@ -7,6 +7,11 @@ type Events = {
   tool: string
   pathname: string
   to: string
+  share: {
+    path: string
+    name: string
+    is_dir: boolean
+  }
 }
 
 export const bus = mitt<Events>()

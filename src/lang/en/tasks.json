@@ -5,6 +5,7 @@
   "copy": "Copy file from a storage to another storage",
   "decompress": "Download and decompress an archive file",
   "decompress_upload": "Upload extracted file into target storage",
+  "s3_transition": "Archive and restore S3 objects",
   "done": "Completed",
   "undone": "Running",
   "clear_succeeded": "Clear Succeeded",
@@ -57,9 +58,38 @@
       "inner": "Inner Path",
       "password": "Extraction Password"
     },
+    "s3_transition": {
+      "action": "Action",
+      "path": "Path",
+      "storage_class": "Storage Class",
+      "transition_days": "Transition After (days)",
+      "restore_days": "Restore Duration (days)",
+      "restore_tier": "Restore Tier",
+      "message": "Message"
+    },
     "time_elapsed": "Time Elapsed",
     "status": "Status",
     "err": "Error"
   },
-  "show_only_mine": "Show only my tasks"
+  "show_only_mine": "Show only my tasks",
+  "s3_transition_actions": {
+    "archive": "Archive",
+    "restore": "Restore"
+  },
+  "s3_transition_status": {
+    "pending": "Pending",
+    "queued": "Queued",
+    "in_progress": "In Progress",
+    "running": "Running",
+    "complete": "Completed",
+    "completed": "Completed",
+    "succeeded": "Succeeded",
+    "failed": "Failed",
+    "failing": "Failing",
+    "canceled": "Canceled",
+    "cancelled": "Canceled",
+    "ready": "Ready",
+    "expiring": "Expiring",
+    "restore_in_progress": "Restore In Progress"
+  }
 }

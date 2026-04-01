@@ -7,6 +7,7 @@ export * from "./driver_item"
 export * from "./item_type"
 export * from "./meta"
 export * from "./task"
+export * from "./share"
 
 export interface StoreObj {
   name: string
@@ -17,6 +18,7 @@ export interface StoreObj {
   thumb?: string
   type: number
   selected?: boolean
+  storage_class?: string
   label_list?: {
     id: number
     name: string

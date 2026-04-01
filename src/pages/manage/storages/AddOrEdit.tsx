@@ -151,6 +151,7 @@ const AddOrEdit = () => {
               <Item
                 {...item}
                 driver="common"
+                additionValues={addition}
                 value={(storage as any)[item.name]}
                 onChange={(val: any) => {
                   setStorage(item.name as keyof Storage, val)
@@ -163,6 +164,7 @@ const AddOrEdit = () => {
               <Item
                 {...item}
                 driver={storage.driver}
+                additionValues={addition}
                 value={addition[item.name] as any}
                 onChange={(val: any) => {
                   setAddition(item.name, val)

@@ -2,6 +2,9 @@ import { ext, recordToArray, strToRegExp } from "~/utils"
 
 const settings: Record<string, string> = {}
 
+export const DEFAULT_PAGE_SIZE = 200
+export const MAX_PAGE_SIZE = 500
+
 export const setSettings = (items: Record<string, string>) => {
   Object.keys(items).forEach((key) => {
     settings[key] = items[key]
@@ -85,9 +88,19 @@ export const getPagination = (): {
   size: number
   type: "all" | "pagination" | "load_more" | "auto_load_more"
 } => {
+  const rawType = (getSetting("pagination_type") || "all") as
+    | "all"
+    | "pagination"
+    | "load_more"
+    | "auto_load_more"
+  const size = Math.min(
+    MAX_PAGE_SIZE,
+    Math.max(1, getSettingNumber("default_page_size", DEFAULT_PAGE_SIZE)),
+  )
   return {
-    type: (getSetting("pagination_type") || "all") as any,
-    size: getSettingNumber("default_page_size", 30),
+    // `all` would trigger very large payloads; fallback to pagination.
+    type: rawType === "all" ? "pagination" : rawType,
+    size,
   }
 }
 

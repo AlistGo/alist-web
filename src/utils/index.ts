@@ -10,5 +10,6 @@ export * from "./handle_resp"
 export * from "./const"
 export * from "./api"
 export * from "./hash"
+export * from "./storage-class"
 
 export { getLabelFileBinding } from "./api"

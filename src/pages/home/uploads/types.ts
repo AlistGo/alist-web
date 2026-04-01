@@ -1,3 +1,5 @@
+import { TaskInfo } from "~/types"
+
 type Status = "pending" | "uploading" | "backending" | "success" | "error"
 export interface UploadFileProps {
   name: string
@@ -7,6 +9,8 @@ export interface UploadFileProps {
   speed: number
   status: Status
   msg?: string
+  task?: TaskInfo
+  task_id?: string
 }
 export const StatusBadge = {
   pending: "neutral",
@@ -16,6 +20,10 @@ export const StatusBadge = {
   error: "danger",
 } as const
 export type SetUpload = (key: keyof UploadFileProps, value: any) => void
+export interface UploadResult {
+  error?: Error
+  task?: TaskInfo
+}
 export type Upload = (
   uploadPath: string,
   file: File,
@@ -23,4 +31,4 @@ export type Upload = (
   asTask: boolean,
   overwrite: boolean,
   rapid: boolean,
-) => Promise<Error | undefined>
+) => Promise<UploadResult>

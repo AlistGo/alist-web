@@ -12,7 +12,7 @@ import {
   lazy,
   Suspense,
 } from "solid-js"
-import { bus, convertURL, notify, joinBase } from "~/utils"
+import { bus, convertURL, notify, joinBase, pathJoin } from "~/utils"
 import { ObjType, UserMethods, UserPermissions } from "~/types"
 import {
   getSettingBool,
@@ -123,6 +123,12 @@ export const ContextMenu = () => {
   const canPackageDownload = () => {
     return UserMethods.is_admin(me()) || getSettingBool("package_download")
   }
+
+  const canS3Transition = () => {
+    if (!haveSelected()) return false
+    if (!UserMethods.is_admin(me())) return false
+    return selectedObjs().every((obj) => !obj.is_dir && !!obj.storage_class)
+  }
   const { rawLink } = useLink()
   return (
     <>
@@ -198,7 +204,39 @@ export const ContextMenu = () => {
             <ItemContent name="decompress" />
           </Item>
         </Show>
+
+        <Show when={canS3Transition()}>
+          <Item
+            onClick={() => {
+              bus.emit("tool", "s3_archive")
+            }}
+          >
+            <ItemContent name="s3_archive" />
+          </Item>
+          <Item
+            onClick={() => {
+              bus.emit("tool", "s3_restore")
+            }}
+          >
+            <ItemContent name="s3_restore" />
+          </Item>
+        </Show>
         <Show when={oneChecked()}>
+          <Item
+            onClick={({ props }) => {
+              const targetPath =
+                props.path && props.path.startsWith("/")
+                  ? props.path
+                  : pathJoin(getCurrentPath(), props.name)
+              bus.emit("share", {
+                path: targetPath,
+                name: props.name,
+                is_dir: props.is_dir,
+              })
+            }}
+          >
+            <ItemContent name="share" />
+          </Item>
           <Item
             onClick={({ props }) => {
               if (props.is_dir) {

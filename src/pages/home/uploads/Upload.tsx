@@ -12,20 +12,35 @@ import {
   Button,
   Box,
 } from "@hope-ui/solid"
-import { createSignal, For, Show } from "solid-js"
+import { createSignal, For, onCleanup, Show } from "solid-js"
 import { usePath, useRouter, useT } from "~/hooks"
 import { getMainColor } from "~/store"
 import {
   RiDocumentFolderUploadFill,
   RiDocumentFileUploadFill,
 } from "solid-icons/ri"
-import { getFileSize, notify, pathJoin } from "~/utils"
+import { Resp, TaskInfo } from "~/types"
+import { getFileSize, joinBase, notify, pathJoin, r } from "~/utils"
 import { asyncPool } from "~/utils/async_pool"
 import { createStore } from "solid-js/store"
 import { UploadFileProps, StatusBadge } from "./types"
 import { File2Upload, traverseFileTree } from "./util"
 import { SelectWrapper } from "~/components"
 import { getUploads } from "./uploads"
+import { TaskState } from "~/pages/manage/tasks/Task"
+
+enum TaskStateEnum {
+  Pending,
+  Running,
+  Succeeded,
+  Canceling,
+  Canceled,
+  Errored,
+  Failing,
+  Failed,
+  WaitingRetry,
+  BeforeRetry,
+}
 
 const UploadFile = (props: UploadFileProps) => {
   const t = useT()
@@ -48,12 +63,34 @@ const UploadFile = (props: UploadFileProps) => {
       >
         {props.path}
       </Text>
-      <HStack spacing="$2">
-        <Badge colorScheme={StatusBadge[props.status]}>
-          {t(`home.upload.${props.status}`)}
-        </Badge>
+      <HStack spacing="$2" flexWrap="wrap">
+        <Show
+          when={props.task}
+          fallback={
+            <Badge colorScheme={StatusBadge[props.status]}>
+              {t(`home.upload.${props.status}`)}
+            </Badge>
+          }
+        >
+          <TaskState state={props.task!.state} />
+        </Show>
         <Text>{getFileSize(props.speed)}/s</Text>
       </HStack>
+      <Show when={props.task_id}>
+        <HStack spacing="$2" flexWrap="wrap">
+          <Badge colorScheme="accent">{props.task_id}</Badge>
+          <Button
+            size="xs"
+            variant="subtle"
+            as="a"
+            href={joinBase("/@manage/tasks/upload")}
+            target="_blank"
+            rel="noreferrer"
+          >
+            {t("home.upload.open_task_center")}
+          </Button>
+        </HStack>
+      </Show>
       <Progress
         w="$full"
         trackColor="$info3"
@@ -64,7 +101,9 @@ const UploadFile = (props: UploadFileProps) => {
         <ProgressIndicator color={getMainColor()} rounded="$md" />
         {/* <ProgressLabel /> */}
       </Progress>
-      <Text color="$danger10">{props.msg}</Text>
+      <Show when={props.msg}>
+        <Text color="$danger10">{props.msg}</Text>
+      </Show>
     </VStack>
   )
 }
@@ -83,13 +122,70 @@ const Upload = () => {
   }>({
     uploads: [],
   })
+  const taskPollers = new Map<string, number>()
   const allDone = () => {
     return uploadFiles.uploads.every(({ status }) =>
       ["success", "error"].includes(status),
     )
   }
+  const hasBackgroundTask = () =>
+    uploadFiles.uploads.some(({ task_id }) => !!task_id)
   let fileInput: HTMLInputElement
   let folderInput: HTMLInputElement
+  const clearTaskPoller = (path: string) => {
+    const timer = taskPollers.get(path)
+    if (timer !== undefined) {
+      window.clearTimeout(timer)
+      taskPollers.delete(path)
+    }
+  }
+  const scheduleTaskPoll = (path: string, taskID: string, delay = 1500) => {
+    clearTaskPoller(path)
+    const timer = window.setTimeout(() => {
+      void pollTask(path, taskID)
+    }, delay)
+    taskPollers.set(path, timer)
+  }
+  const setUpload = (path: string, key: keyof UploadFileProps, value: any) => {
+    setUploadFiles("uploads", (upload) => upload.path === path, key, value)
+  }
+  const syncTask = (path: string, task: TaskInfo) => {
+    setUpload(path, "task", task)
+    setUpload(path, "task_id", task.id)
+    setUpload(path, "progress", task.progress)
+    if (task.state === TaskStateEnum.Succeeded) {
+      clearTaskPoller(path)
+      setUpload(path, "status", "success")
+      setUpload(path, "progress", 100)
+      setUpload(path, "msg", undefined)
+      refresh(undefined, true)
+      return
+    }
+    if (
+      task.state === TaskStateEnum.Failed ||
+      task.state === TaskStateEnum.Canceled
+    ) {
+      clearTaskPoller(path)
+      setUpload(path, "status", "error")
+      setUpload(path, "msg", task.error || task.status)
+      return
+    }
+    setUpload(path, "status", "backending")
+    setUpload(path, "msg", undefined)
+    scheduleTaskPoll(path, task.id)
+  }
+  const pollTask = async (path: string, taskID: string) => {
+    const resp: Resp<TaskInfo> = await r.post(`/task/upload/info?tid=${taskID}`)
+    if (resp.code !== 200 || !resp.data) {
+      scheduleTaskPoll(path, taskID, 3000)
+      return
+    }
+    syncTask(path, resp.data)
+  }
+  onCleanup(() => {
+    taskPollers.forEach((timer) => window.clearTimeout(timer))
+    taskPollers.clear()
+  })
   const handleAddFiles = async (files: File[]) => {
     if (files.length === 0) return
     setUploading(true)
@@ -102,9 +198,6 @@ const Upload = () => {
     }
     refresh(undefined, true)
   }
-  const setUpload = (path: string, key: keyof UploadFileProps, value: any) => {
-    setUploadFiles("uploads", (upload) => upload.path === path, key, value)
-  }
   const uploaders = getUploads()
   const [curUploader, setCurUploader] = createSignal(uploaders[0])
   const handleFile = async (file: File) => {
@@ -112,7 +205,7 @@ const Upload = () => {
     setUpload(path, "status", "uploading")
     const uploadPath = pathJoin(pathname(), path)
     try {
-      const err = await curUploader().upload(
+      const result = await curUploader().upload(
         uploadPath,
         file,
         (key, value) => {
@@ -122,12 +215,14 @@ const Upload = () => {
         overwrite(),
         rapid(),
       )
-      if (!err) {
+      if (result.error) {
+        setUpload(path, "status", "error")
+        setUpload(path, "msg", result.error.message)
+      } else if (result.task) {
+        syncTask(path, result.task)
+      } else {
         setUpload(path, "status", "success")
         setUpload(path, "progress", 100)
-      } else {
-        setUpload(path, "status", "error")
-        setUpload(path, "msg", err.message)
       }
     } catch (e: any) {
       console.error(e)
@@ -142,6 +237,16 @@ const Upload = () => {
         fallback={
           <>
             <HStack spacing="$2">
+              <Show when={hasBackgroundTask()}>
+                <Button
+                  colorScheme="primary"
+                  onClick={() => {
+                    window.open(joinBase("/@manage/tasks/upload"), "_blank")
+                  }}
+                >
+                  {t("home.upload.open_task_center")}
+                </Button>
+              </Show>
               <Button
                 colorScheme="accent"
                 onClick={() => {

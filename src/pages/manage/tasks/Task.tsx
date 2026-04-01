@@ -137,7 +137,7 @@ export const Task = (props: TaskAttribute & TasksProps & TaskLocalSetter) => {
     props.nameAnalyzer.regex,
   )
   const title =
-    matches === null ? props.name : props.nameAnalyzer.title(matches)
+    matches === null ? props.name : props.nameAnalyzer.title(matches, props)
   const startTime =
     props.start_time === null ? -1 : new Date(props.start_time).getTime()
   const endTime =
@@ -315,7 +315,7 @@ export const Task = (props: TaskAttribute & TasksProps & TaskLocalSetter) => {
             <Show when={matches !== null}>
               <For each={Object.entries(props.nameAnalyzer.attrs)}>
                 {(entry) => {
-                  const value = entry[1](matches as RegExpMatchArray)
+                  const value = entry[1](matches as RegExpMatchArray, props)
                   return value === undefined ? null : (
                     <Show when={entry[1] !== undefined}>
                       <GridItem
@@ -338,7 +338,9 @@ export const Task = (props: TaskAttribute & TasksProps & TaskLocalSetter) => {
             >
               {t(`tasks.attr.status`)}
             </GridItem>
-            <GridItem color="$neutral9">{props.status}</GridItem>
+            <GridItem color="$neutral9">
+              {props.nameAnalyzer.statusText?.(props) ?? props.status}
+            </GridItem>
             <Show when={props.error}>
               <GridItem
                 color="$danger9"

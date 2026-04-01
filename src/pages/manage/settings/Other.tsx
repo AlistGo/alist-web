@@ -68,6 +68,9 @@ const OtherSettings = () => {
         temp_dir: thunderTempDir(),
       }),
   )
+  const [setTokenLoading, setTokenRequest] = useFetch(
+    (): PResp<string> => r.post("/admin/setting/set_token", { token: token() }),
+  )
   const refresh = async () => {
     const resp = await settingsData()
     handleResp(resp, (data) => {
@@ -247,7 +250,10 @@ const OtherSettings = () => {
         {t("settings_other.set_thunder")}
       </Button>
       <Heading my="$2">{t("settings.token")}</Heading>
-      <Input value={token()} readOnly />
+      <Input
+        value={token()}
+        onInput={(e: any) => setToken(e.target.value as string)}
+      />
       <HStack my="$2" spacing="$2">
         <Button
           onClick={() => {
@@ -255,6 +261,18 @@ const OtherSettings = () => {
           }}
         >
           {t("settings_other.copy_token")}
+        </Button>
+        <Button
+          loading={setTokenLoading()}
+          onClick={async () => {
+            const resp = await setTokenRequest()
+            handleResp(resp, (data) => {
+              notify.success(t("settings_other.set_token_success"))
+              setToken(data)
+            })
+          }}
+        >
+          {t("settings_other.set_token")}
         </Button>
         <Button
           colorScheme="danger"

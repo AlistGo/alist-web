@@ -3,6 +3,8 @@
   "aria2_version": "Aria2 Version:",
   "set_aria2": "Set aria2",
   "copy_token": "Copy Token",
+  "set_token": "Set Token",
+  "set_token_success": "Set Token Successfully",
   "reset_token": "Reset Token",
   "reset_token_success": "Reset Token Successfully",
   "unknown_type": "Unknown type",

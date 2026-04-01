@@ -8,6 +8,12 @@ import { isArchive } from "~/store/archive"
 
 type Ext = string[] | "*" | ((name: string) => boolean)
 type Prior = boolean | (() => boolean)
+const shareIncompatiblePreviewNames = new Set([
+  "Aliyun Video Previewer",
+  "Doubao Preview",
+  "Aliyun Office Previewer",
+  "Archive Preview",
+])
 
 const extsContains = (exts: Ext | undefined, name: string): boolean => {
   if (exts === undefined) {
@@ -51,6 +57,13 @@ const previews: Preview[] = [
     type: ObjType.VIDEO,
     provider: /^Aliyundrive(Open)?$/,
     component: lazy(() => import("./aliyun_video")),
+    prior: true,
+  },
+  {
+    name: "Doubao Preview",
+    exts: ["pdf"],
+    provider: /^DoubaoNew$/,
+    component: lazy(() => import("./doubao")),
     prior: true,
   },
   {
@@ -109,6 +122,12 @@ const previews: Preview[] = [
     prior: true,
   },
   {
+    name: "PDF",
+    exts: ["pdf"],
+    component: lazy(() => import("./pdf")),
+    prior: true,
+  },
+  {
     name: "Aliyun Office Previewer",
     exts: ["doc", "docx", "ppt", "pptx", "xls", "xlsx", "pdf"],
     provider: /^Aliyundrive(Share)?$/,
@@ -142,15 +161,19 @@ const previews: Preview[] = [
 ]
 
 export const getPreviews = (
-  file: Obj & { provider: string },
+  file: Obj & { provider: string; download_url?: string },
 ): PreviewComponent[] => {
-  const { searchParams } = useRouter()
+  const { pathname, searchParams } = useRouter()
   const typeOverride =
     ObjType[searchParams["type"]?.toUpperCase() as keyof typeof ObjType]
+  const isShareRoute = pathname().startsWith("/s/")
   const res: PreviewComponent[] = []
   const subsequent: PreviewComponent[] = []
   // internal previews
   previews.forEach((preview) => {
+    if (isShareRoute && shareIncompatiblePreviewNames.has(preview.name)) {
+      return
+    }
     if (preview.provider && !preview.provider.test(file.provider)) {
       return
     }
@@ -176,9 +199,11 @@ export const getPreviews = (
     })
   })
   // download page
-  res.push({
-    name: "Download",
-    component: lazy(() => import("./download")),
-  })
+  if (!isShareRoute || file.download_url) {
+    res.push({
+      name: "Download",
+      component: lazy(() => import("./download")),
+    })
+  }
   return res.concat(subsequent)
 }

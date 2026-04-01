@@ -1,9 +1,9 @@
-import { Box, Center, HStack, Icon, Text, VStack } from "@hope-ui/solid"
+import { Badge, Box, Center, HStack, Icon, Text, VStack } from "@hope-ui/solid"
 import { Motion } from "@motionone/solid"
 import { useContextMenu } from "solid-contextmenu"
-import { batch, Show } from "solid-js"
+import { batch, Show, createMemo } from "solid-js"
 import { CenterLoading, LinkWithPush, ImageWithError } from "~/components"
-import { usePath, useRouter, useUtil } from "~/hooks"
+import { usePath, useRouter, useUtil, useT } from "~/hooks"
 import {
   checkboxOpen,
   getMainColor,
@@ -12,7 +12,7 @@ import {
   StoreObj,
 } from "~/store"
 import { Obj, ObjType } from "~/types"
-import { bus, hoverColor } from "~/utils"
+import { bus, hoverColor, normalizeStorageClass } from "~/utils"
 import { getIconByObj } from "~/utils/icon"
 import { ItemCheckbox, useSelectWithMouse } from "./helper"
 import { pathJoin } from "~/utils/path"
@@ -32,8 +32,16 @@ export const GridItem = (props: { obj: StoreObj & Obj; index: number }) => {
   )
   const { show } = useContextMenu({ id: 1 })
   const { pushHref, to, pathname } = useRouter()
+  const t = useT()
   const { openWithDoubleClick, toggleWithClick, restoreSelectionCache } =
     useSelectWithMouse()
+  const storageClassKey = createMemo(() =>
+    normalizeStorageClass(props.obj.storage_class),
+  )
+  const storageClassLabel = createMemo(() => {
+    const key = storageClassKey()
+    return key ? t(`home.storage_class.${key}`) : undefined
+  })
 
   // 构建完整路径
   const getFullPath = () => {
@@ -141,19 +149,31 @@ export const GridItem = (props: { obj: StoreObj & Obj; index: number }) => {
             />
           </Show>
         </Center>
-        <Text
-          css={{
-            whiteSpace: "nowrap",
-            textOverflow: "ellipsis",
-          }}
-          w="$full"
-          overflow="hidden"
-          textAlign="center"
-          fontSize="$sm"
-          title={props.obj.name}
-        >
-          {props.obj.name}
-        </Text>
+        <VStack spacing="$1" w="$full" alignItems="center">
+          <Text
+            css={{
+              whiteSpace: "nowrap",
+              textOverflow: "ellipsis",
+            }}
+            w="$full"
+            overflow="hidden"
+            textAlign="center"
+            fontSize="$sm"
+            title={props.obj.name}
+          >
+            {props.obj.name}
+          </Text>
+          <Show when={storageClassLabel()}>
+            <Badge
+              variant="subtle"
+              colorScheme="primary"
+              textTransform="none"
+              css={{ "font-size": "0.65rem" }}
+            >
+              {storageClassLabel()}
+            </Badge>
+          </Show>
+        </VStack>
       </VStack>
     </Motion.div>
   )

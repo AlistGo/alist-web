@@ -28,8 +28,14 @@ import { me } from "~/store"
 
 export interface TaskNameAnalyzer {
   regex: RegExp
-  title: (matches: RegExpMatchArray) => string
-  attrs: { [attr: string]: (matches: RegExpMatchArray) => JSX.Element }
+  title: (matches: RegExpMatchArray, task?: TaskInfo) => string
+  attrs: {
+    [attr: string]: (
+      matches: RegExpMatchArray,
+      task?: TaskInfo,
+    ) => JSX.Element | undefined
+  }
+  statusText?: (task: TaskInfo) => JSX.Element | string | undefined
 }
 
 export interface TasksProps {

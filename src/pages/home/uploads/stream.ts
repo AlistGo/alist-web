@@ -1,8 +1,13 @@
 import { password } from "~/store"
-import { EmptyResp } from "~/types"
+import { Resp, TaskInfo } from "~/types"
 import { r } from "~/utils"
 import { SetUpload, Upload } from "./types"
 import { calculateHash } from "./util"
+
+type UploadResp = Resp<{
+  task?: TaskInfo
+}>
+
 export const StreamUpload: Upload = async (
   uploadPath: string,
   file: File,
@@ -10,7 +15,7 @@ export const StreamUpload: Upload = async (
   asTask = false,
   overwrite = false,
   rapid = false,
-): Promise<Error | undefined> => {
+) => {
   let oldTimestamp = new Date().valueOf()
   let oldLoaded = 0
   let headers: { [k: string]: any } = {
@@ -27,7 +32,7 @@ export const StreamUpload: Upload = async (
     headers["X-File-Sha1"] = sha1
     headers["X-File-Sha256"] = sha256
   }
-  const resp: EmptyResp = await r.put("/fs/put", file, {
+  const resp: UploadResp = await r.put("/fs/put", file, {
     headers: headers,
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {
@@ -56,8 +61,12 @@ export const StreamUpload: Upload = async (
     },
   })
   if (resp.code === 200) {
-    return
+    return {
+      task: resp.data?.task,
+    }
   } else {
-    return new Error(resp.message)
+    return {
+      error: new Error(resp.message),
+    }
   }
 }

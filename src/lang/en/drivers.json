@@ -68,7 +68,11 @@
   "123 Open": {
     "client_id": "Client id",
     "client_secret": "Client secret",
-    "root_folder_id": "Root folder id"
+    "private_key": "Private key",
+    "root_folder_id": "Root folder id",
+    "uid": "Uid",
+    "valid_duration": "Valid duration",
+    "valid_duration-tips": "minutes"
   },
   "123Pan": {
     "password": "Password",
@@ -113,6 +117,8 @@
     "cookie-tips": "Fill in the cookie if need captcha",
     "password": "Password",
     "root_folder_id": "Root folder id",
+    "strip_emoji": "Strip emoji",
+    "strip_emoji-tips": "Remove four-byte characters (e.g., emoji) before upload",
     "username": "Username"
   },
   "189CloudPC": {
@@ -133,6 +139,8 @@
     "password": "Password",
     "rapid_upload": "Rapid upload",
     "root_folder_id": "Root folder id",
+    "strip_emoji": "Strip emoji",
+    "strip_emoji-tips": "Remove four-byte characters (e.g., emoji) before upload",
     "type": "Type",
     "types": {
       "family": "Family",
@@ -292,7 +300,9 @@
     "root_folder_path": "Root folder path",
     "upload_api": "Upload api",
     "upload_thread": "Upload thread",
-    "upload_thread-tips": "1\u003c=thread\u003c=32"
+    "upload_thread-tips": "1\u003c=thread\u003c=32",
+    "use_dynamic_upload_api": "Use dynamic upload api",
+    "use_dynamic_upload_api-tips": "dynamically get upload api domain, when enabled, the 'Upload API' setting will be used as a fallback if failed to get"
   },
   "BaiduPhoto": {
     "album_id": "Album id",
@@ -312,6 +322,49 @@
     "pwd": "Pwd",
     "root_folder_path": "Root folder path",
     "surl": "Surl"
+  },
+  "BaiduYouth": {
+    "cookie": "Cookie",
+    "download_api": "Download api",
+    "download_apis": {
+      "crack": "Crack",
+      "official": "Official"
+    },
+    "force_proxy": "Force proxy",
+    "force_proxy-tips": "Proxy downloads through AList. Disable to redirect the browser to a fresh Baidu direct link.",
+    "order_by": "Order by",
+    "order_bys": {
+      "name": "Name",
+      "size": "Size",
+      "time": "Time"
+    },
+    "order_direction": "Order direction",
+    "order_directions": {
+      "asc": "Asc",
+      "desc": "Desc"
+    },
+    "root_folder_path": "Root folder path",
+    "upload_api": "Upload api",
+    "upload_thread": "Upload thread",
+    "upload_thread-tips": "1\u003c=thread\u003c=32"
+  },
+  "BitQiu": {
+    "order_desc": "Order desc",
+    "order_type": "Order type",
+    "order_types": {
+      "createTime": "CreateTime",
+      "name": "Name",
+      "size": "Size",
+      "updateTime": "UpdateTime"
+    },
+    "page_size": "Page size",
+    "page_size-tips": "Number of entries to request per page.",
+    "password": "Password",
+    "root_folder_id": "Root folder id",
+    "user_agent": "User agent",
+    "user_platform": "User platform",
+    "user_platform-tips": "Optional device identifier; auto-generated if empty.",
+    "username": "Username"
   },
   "ChaoXingGroupDrive": {
     "bbsid": "Bbsid",
@@ -406,7 +459,22 @@
     "root_folder_path": "Root folder path",
     "secret_access_key": "Secret access key",
     "session_token": "Session token",
-    "sign_url_expire": "Sign url expire"
+    "sign_url_expire": "Sign url expire",
+    "storage_class": "Storage class",
+    "storage_class-tips": "Storage class for new objects. AWS and Tencent COS support different subsets (COS uses ARCHIVE/DEEP_ARCHIVE).",
+    "storage_classs": {
+      "": "",
+      "archive": "Archive",
+      "deep_archive": "Deep archive",
+      "glacier": "Glacier",
+      "glacier_ir": "Glacier ir",
+      "intelligent_tiering": "Intelligent tiering",
+      "onezone_ia": "Onezone ia",
+      "standard": "Standard",
+      "standard_ia": "Standard ia"
+    },
+    "use_placeholder": "Use placeholder",
+    "use_placeholder-tips": "Create hidden placeholder file (for example .alist) to keep empty folders."
   },
   "Doubao": {
     "cookie": "Cookie",
@@ -417,6 +485,17 @@
     },
     "root_folder_id": "Root folder id",
     "upload_thread": "Upload thread"
+  },
+  "DoubaoNew": {
+    "authorization": "Authorization",
+    "authorization-tips": "DPoP access token (Authorization header value); optional if present in cookie",
+    "cookie": "Cookie",
+    "cookie-tips": "Optional cookie; only used to extract authorization/dpop tokens",
+    "debug": "Debug",
+    "debug-tips": "Enable debug logs for upload",
+    "dpop": "Dpop",
+    "dpop-tips": "DPoP header value; optional if present in cookie",
+    "root_folder_id": "Root folder id"
   },
   "DoubaoShare": {
     "cookie": "Cookie",
@@ -437,6 +516,21 @@
     "encoding": "Encoding",
     "password": "Password",
     "root_folder_path": "Root folder path",
+    "username": "Username"
+  },
+  "FTPS": {
+    "address": "Address",
+    "encoding": "Encoding",
+    "password": "Password",
+    "root_folder_path": "Root folder path",
+    "tls_insecure_skip_verify": "Tls insecure skip verify",
+    "tls_insecure_skip_verify-tips": "Allow insecure TLS connections (e.g. self-signed certificates)",
+    "tls_mode": "Tls mode",
+    "tls_mode-tips": "Explicit: STARTTLS on port 21; Implicit: direct TLS on port 990",
+    "tls_modes": {
+      "Explicit": "Explicit",
+      "Implicit": "Implicit"
+    },
     "username": "Username"
   },
   "FebBox": {
@@ -502,9 +596,27 @@
     "token": "Token",
     "token-tips": "GitHub token, if you want to access private repositories or increase the rate limit"
   },
+  "Gitee": {
+    "cookie": "Cookie",
+    "cookie-tips": "Cookie returned from user info request",
+    "download_proxy": "Download proxy",
+    "download_proxy-tips": "Prefix added before download URLs, e.g. https://mirror.example.com/",
+    "endpoint": "Endpoint",
+    "endpoint-tips": "Gitee API endpoint, default https://gitee.com/api/v5",
+    "owner": "Owner",
+    "ref": "Ref",
+    "ref-tips": "Branch, tag or commit SHA, defaults to repository default branch",
+    "repo": "Repo",
+    "root_folder_path": "Root folder path",
+    "token": "Token"
+  },
   "Gofile": {
     "api_token": "Api token",
     "api_token-tips": "Get your API token from your Gofile profile page",
+    "direct_link_expiry": "Direct link expiry",
+    "direct_link_expiry-tips": "Direct link expiration time in hours on Gofile server. Set to 0 for no expiration",
+    "link_expiry": "Link expiry",
+    "link_expiry-tips": "Direct link cache duration in days. Set to 0 to disable caching",
     "root_folder_id": "Root folder id"
   },
   "GoogleDrive": {
@@ -613,8 +725,12 @@
     "thumb_cache_folder": "Thumb cache folder",
     "thumb_concurrency": "Thumb concurrency",
     "thumb_concurrency-tips": "Number of concurrent thumbnail generation goroutines. This controls how many thumbnails can be generated in parallel.",
+    "thumb_pixel": "Thumb pixel",
+    "thumb_pixel-tips": "Specifies the target width for image thumbnails in pixels. The height of the thumbnail will be calculated automatically to maintain the original aspect ratio of the image.",
     "thumbnail": "Thumbnail",
     "thumbnail-tips": "enable thumbnail",
+    "use_ffmpeg": "Use ffmpeg",
+    "use_ffmpeg-tips": "use ffmpeg to generate thumbnail",
     "video_thumb_pos": "Video thumb pos",
     "video_thumb_pos-tips": "The position of the video thumbnail. If the value is a number (integer ot floating point), it represents the time in seconds. If the value ends with '%', it represents the percentage of the video duration."
   },
@@ -639,6 +755,7 @@
   },
   "MediaTrack": {
     "access_token": "Access token",
+    "device_fingerprint": "Device fingerprint",
     "order_by": "Order by",
     "order_bys": {
       "size": "Size",
@@ -774,8 +891,15 @@
     "share_pwd": "Share pwd",
     "use_transcoding_address": "Use transcoding address"
   },
+  "ProtonDrive": {
+    "password": "Password",
+    "root_folder_path": "Root folder path",
+    "two_fa_code,omitempty": "Two fa code,omitempty",
+    "username": "Username"
+  },
   "Quark": {
     "cookie": "Cookie",
+    "only_list_video_file": "Only list video file",
     "order_by": "Order by",
     "order_bys": {
       "file_name": "File name",
@@ -788,7 +912,9 @@
       "asc": "Asc",
       "desc": "Desc"
     },
-    "root_folder_id": "Root folder id"
+    "root_folder_id": "Root folder id",
+    "use_transcoding_address": "Use transcoding address",
+    "use_transcoding_address-tips": "You can watch the transcoded video and support 302 redirection"
   },
   "QuarkTV": {
     "device_id": "Device id",
@@ -827,7 +953,22 @@
     "root_folder_path": "Root folder path",
     "secret_access_key": "Secret access key",
     "session_token": "Session token",
-    "sign_url_expire": "Sign url expire"
+    "sign_url_expire": "Sign url expire",
+    "storage_class": "Storage class",
+    "storage_class-tips": "Storage class for new objects. AWS and Tencent COS support different subsets (COS uses ARCHIVE/DEEP_ARCHIVE).",
+    "storage_classs": {
+      "": "",
+      "archive": "Archive",
+      "deep_archive": "Deep archive",
+      "glacier": "Glacier",
+      "glacier_ir": "Glacier ir",
+      "intelligent_tiering": "Intelligent tiering",
+      "onezone_ia": "Onezone ia",
+      "standard": "Standard",
+      "standard_ia": "Standard ia"
+    },
+    "use_placeholder": "Use placeholder",
+    "use_placeholder-tips": "Create hidden placeholder file (for example .alist) to keep empty folders."
   },
   "SFTP": {
     "address": "Address",
@@ -853,6 +994,62 @@
     "root_folder_path": "Root folder path",
     "token": "Token",
     "username": "Username"
+  },
+  "Streamtape": {
+    "api_key": "Api key",
+    "api_key-tips": "API Key from Streamtape account settings",
+    "api_login": "Api login",
+    "api_login-tips": "API Login from Streamtape account settings",
+    "enable_range_control": "Enable range control",
+    "enable_range_control-tips": "Enable driver-level range shaping for smoother streaming",
+    "range_chunk_mb": "Range chunk mb",
+    "range_chunk_mb-tips": "Chunk mode part size in MB",
+    "range_concurrency": "Range concurrency",
+    "range_concurrency-tips": "Chunk mode concurrent upstream requests",
+    "range_mode": "Range mode",
+    "range_mode-tips": "Range strategy for preview: chunk=bounded ranges, full=single full-tail range, percent=part size by file percentage",
+    "range_modes": {
+      "chunk": "Chunk",
+      "full": "Full",
+      "percent": "Percent"
+    },
+    "range_percent": "Range percent",
+    "range_percent-tips": "Percent mode part size percentage (1-100)",
+    "root_folder_id": "Root folder id",
+    "sha256": "Sha256",
+    "sha256-tips": "Expected SHA256 hash for upload verification (optional)"
+  },
+  "Strm": {
+    "PathPrefix": "PathPrefix",
+    "PathPrefix-tips": "Path prefix in strm content",
+    "RotateSignNow": "RotateSignNow",
+    "RotateSignNow-tips": "Set true and save to rotate signs now (rewrite local STRM), then auto reset to false",
+    "SaveLocalMode": "SaveLocalMode",
+    "SaveLocalMode-tips": "Local save mode",
+    "SaveLocalModes": {
+      "insert": "Insert",
+      "sync": "Sync",
+      "update": "Update"
+    },
+    "SaveStrmLocalPath": "SaveStrmLocalPath",
+    "SaveStrmLocalPath-tips": "Local path for generated files",
+    "SaveStrmToLocal": "SaveStrmToLocal",
+    "SaveStrmToLocal-tips": "Save generated files to local disk",
+    "SignExpireHours": "SignExpireHours",
+    "SignExpireHours-tips": "Driver-level sign expiration in hours. 0 uses global link_expiration",
+    "downloadFileTypes": "DownloadFileTypes",
+    "downloadFileTypes-tips": "Extensions to download as local files",
+    "encodePath": "EncodePath",
+    "encodePath-tips": "Encode path in strm content",
+    "filterFileTypes": "FilterFileTypes",
+    "filterFileTypes-tips": "Extensions to expose as .strm",
+    "paths": "Paths",
+    "siteUrl": "SiteUrl",
+    "siteUrl-tips": "The prefix URL of generated strm file",
+    "withSign": "WithSign",
+    "withSign-tips": "Append sign query to generated URL",
+    "withoutUrl": "WithoutUrl",
+    "withoutUrl-tips": "Generate path-only strm content"
   },
   "Teambition": {
     "cookie": "Cookie",
@@ -1044,6 +1241,7 @@
   },
   "UC": {
     "cookie": "Cookie",
+    "only_list_video_file": "Only list video file",
     "order_by": "Order by",
     "order_bys": {
       "file_name": "File name",
@@ -1056,7 +1254,9 @@
       "asc": "Asc",
       "desc": "Desc"
     },
-    "root_folder_id": "Root folder id"
+    "root_folder_id": "Root folder id",
+    "use_transcoding_address": "Use transcoding address",
+    "use_transcoding_address-tips": "You can watch the transcoded video and support 302 redirection"
   },
   "UCTV": {
     "device_id": "Device id",
@@ -1109,7 +1309,6 @@
     "address": "Address",
     "password": "Password",
     "root_folder_path": "Root folder path",
-    "tls_insecure_skip_verify": "Tls insecure skip verify",
     "username": "Username",
     "vendor": "Vendor",
     "vendors": {
@@ -1149,6 +1348,15 @@
       "time_asc": "Time asc",
       "time_desc": "Time desc"
     }
+  },
+  "WuKongNetdisk": {
+    "aid": "Aid",
+    "aid-tips": "aid query param used by web requests",
+    "cookie": "Cookie",
+    "cookie-tips": "Cookie from https://pan.wkbrowser.com/",
+    "language": "Language",
+    "page_size": "Page size",
+    "root_folder_id": "Root folder id"
   },
   "YandexDisk": {
     "client_id": "Client id",
@@ -1194,19 +1402,24 @@
     "BaiduNetdisk": {},
     "BaiduPhoto": {},
     "BaiduShare": {},
+    "BaiduYouth": {},
+    "BitQiu": {},
     "ChaoXingGroupDrive": {},
     "Cloudreve": {},
     "Cloudreve V4": {},
     "Crypt": {},
     "Doge": {},
     "Doubao": {},
+    "DoubaoNew": {},
     "DoubaoShare": {},
     "Dropbox": {},
     "FTP": {},
+    "FTPS": {},
     "FebBox": {},
     "FeijiPan": {},
     "GitHub API": {},
     "GitHub Releases": {},
+    "Gitee": {},
     "Gofile": {},
     "GoogleDrive": {},
     "GooglePhoto": {},
@@ -1232,6 +1445,7 @@
     "PikPak": {},
     "PikPakShare": {},
     "pCloud": {},
+    "ProtonDrive": {},
     "Quark": {},
     "QuarkTV": {},
     "Quqi": {},
@@ -1239,6 +1453,10 @@
     "SFTP": {},
     "SMB": {},
     "Seafile": {},
+    "Streamtape": {
+      "alert": "Moving files to root folder is not supported by Streamtape API"
+    },
+    "Strm": {},
     "Teambition": {},
     "Terabox": {},
     "Thunder": {},
@@ -1257,7 +1475,9 @@
     "WebDav": {},
     "WeiYun": {},
     "WoPan": {},
-    "YandexDisk": {}
+    "WuKongNetdisk": {},
+    "YandexDisk": {},
+    "pCloud": {}
   },
   "drivers": {
     "115 Cloud": "115 Cloud",
@@ -1280,19 +1500,24 @@
     "BaiduNetdisk": "BaiduNetdisk",
     "BaiduPhoto": "BaiduPhoto",
     "BaiduShare": "BaiduShare",
+    "BaiduYouth": "BaiduYouth",
+    "BitQiu": "BitQiu",
     "ChaoXingGroupDrive": "ChaoXingGroupDrive",
     "Cloudreve": "Cloudreve",
     "Cloudreve V4": "Cloudreve V4",
     "Crypt": "Crypt",
     "Doge": "Doge",
     "Doubao": "Doubao",
+    "DoubaoNew": "DoubaoNew",
     "DoubaoShare": "DoubaoShare",
     "Dropbox": "Dropbox",
     "FTP": "FTP",
+    "FTPS": "FTPS",
     "FebBox": "FebBox",
     "FeijiPan": "FeijiPan",
     "GitHub API": "GitHub API",
     "GitHub Releases": "GitHub Releases",
+    "Gitee": "Gitee",
     "Gofile": "Gofile",
     "GoogleDrive": "GoogleDrive",
     "GooglePhoto": "GooglePhoto",
@@ -1316,6 +1541,7 @@
     "PikPak": "PikPak",
     "PikPakShare": "PikPakShare",
     "pCloud": "pCloud",
+    "ProtonDrive": "ProtonDrive",
     "Quark": "Quark",
     "QuarkTV": "QuarkTV",
     "Quqi": "Quqi",
@@ -1323,6 +1549,8 @@
     "SFTP": "SFTP",
     "SMB": "SMB",
     "Seafile": "Seafile",
+    "Streamtape": "Streamtape",
+    "Strm": "Strm",
     "Teambition": "Teambition",
     "Terabox": "Terabox",
     "Thunder": "Thunder",
@@ -1341,6 +1569,24 @@
     "WebDav": "WebDav",
     "WeiYun": "WeiYun",
     "WoPan": "WoPan",
-    "YandexDisk": "YandexDisk"
+    "WuKongNetdisk": "WuKongNetdisk",
+    "YandexDisk": "YandexDisk",
+    "pCloud": "PCloud"
+  },
+  "pCloud": {
+    "access_token": "Access token",
+    "access_token-tips": "OAuth token from pCloud authorization",
+    "client_id": "Client id",
+    "client_id-tips": "Custom OAuth client ID (optional)",
+    "client_secret": "Client secret",
+    "client_secret-tips": "Custom OAuth client secret (optional)",
+    "hostname": "Hostname",
+    "hostname-tips": "Select pCloud server region",
+    "hostnames": {
+      "eu": "Eu",
+      "us": "Us"
+    },
+    "root_folder_id": "Root folder id",
+    "root_folder_id-tips": "Get folder ID from URL like https://my.pcloud.com/#/filemanager?folder=12345678901 (leave empty for root folder)"
   }
 }

@@ -16,6 +16,7 @@ import { ModalWrapper } from "./ModalWrapper"
 import { LocalSettings } from "./LocalSettings"
 import { BackTop } from "./BackTop"
 import { Decompress } from "~/pages/home/toolbar/Decompress"
+import { S3TransitionModal } from "~/pages/home/toolbar/S3TransitionModal"
 
 const Upload = lazy(() => import("../uploads/Upload"))
 
@@ -27,6 +28,7 @@ export const Modal = () => {
       <Rename />
       <Delete />
       <Decompress />
+      <S3TransitionModal />
       <NewFile />
       <Mkdir />
       <RecursiveMove />

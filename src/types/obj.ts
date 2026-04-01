@@ -21,6 +21,7 @@ export interface Obj {
   tags?: string[]
   id?: string
   hashinfo?: string
+  storage_class?: string
   children?: Obj[]
 }
 

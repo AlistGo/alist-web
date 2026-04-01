@@ -47,6 +47,13 @@ export const Center = () => {
 
   const t = useT()
 
+  const canShowS3Actions = createMemo(() => {
+    if (!UserMethods.is_admin(me())) return false
+    const selected = selectedObjs()
+    if (!selected.length) return false
+    return selected.every((obj) => !obj.is_dir && !!obj.storage_class)
+  })
+
   // 标签相关
   const { labels, refetch } = useLabels()
   const [isAddLabelOpen, setIsAddLabelOpen] = createSignal(false)
@@ -167,6 +174,21 @@ export const Center = () => {
                   )
                 }}
               </For>
+
+              <Show when={canShowS3Actions()}>
+                <CenterIcon
+                  name="s3_archive"
+                  onClick={() => {
+                    bus.emit("tool", "s3_archive")
+                  }}
+                />
+                <CenterIcon
+                  name="s3_restore"
+                  onClick={() => {
+                    bus.emit("tool", "s3_restore")
+                  }}
+                />
+              </Show>
 
               {/* 标签功能 */}
               <Show

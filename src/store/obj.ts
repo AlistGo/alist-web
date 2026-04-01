@@ -54,6 +54,7 @@ const setObjs = (objs: Obj[]) => {
   lastChecked.start = -1
   lastChecked.end = -1
   setObjStore("objs", objs)
+  applySortPreference()
   setObjStore("obj", "is_dir", true)
 }
 
@@ -112,6 +113,7 @@ export const appendObjs = (objs: Obj[]) => {
     "objs",
     produce((prev) => prev.push(...objs)),
   )
+  applySortPreference()
 }
 
 const lastChecked = {
@@ -201,11 +203,86 @@ const layoutRecord: Record<string, LayoutType> = (() => {
     return {}
   }
 })()
+type SortPreference = { orderBy: OrderBy; reverse: boolean }
+const sortRecord: Record<string, SortPreference> = (() => {
+  try {
+    return JSON.parse(localStorage.getItem("sortRecord") || "{}")
+  } catch (e) {
+    return {}
+  }
+})()
+const globalSortRecordKey = "globalSortPreference"
+const getGlobalSortPreference = (): SortPreference | undefined => {
+  try {
+    const preference = JSON.parse(
+      localStorage.getItem(globalSortRecordKey) || "null",
+    ) as SortPreference | null
+    if (!preference || !isValidOrderBy(preference.orderBy)) {
+      return undefined
+    }
+    return {
+      orderBy: preference.orderBy,
+      reverse: !!preference.reverse,
+    }
+  } catch (e) {
+    return undefined
+  }
+}
 
 bus.on("pathname", (p) => setPathname(p))
 
 export const getCurrentPath = () => {
   return trimBase(pathname())
+}
+
+const normalizeSortPath = (path: string) => {
+  if (!path || path === "/") return "/"
+  const normalized = path.replace(/\/+$/g, "")
+  return normalized || "/"
+}
+
+const isValidOrderBy = (value: unknown): value is OrderBy => {
+  return value === "name" || value === "size" || value === "modified"
+}
+
+export const getSortPreference = (
+  path = getCurrentPath(),
+): { orderBy: OrderBy; reverse: boolean } | undefined => {
+  const normalizedPath = normalizeSortPath(path)
+  const preference = sortRecord[normalizedPath]
+  if (preference && isValidOrderBy(preference.orderBy)) {
+    return {
+      orderBy: preference.orderBy,
+      reverse: !!preference.reverse,
+    }
+  }
+  return getGlobalSortPreference()
+}
+
+export const setSortPreference = (
+  orderBy: OrderBy,
+  reverse = false,
+  path = getCurrentPath(),
+) => {
+  const normalizedPath = normalizeSortPath(path)
+  sortRecord[normalizedPath] = {
+    orderBy,
+    reverse,
+  }
+  localStorage.setItem("sortRecord", JSON.stringify(sortRecord))
+  localStorage.setItem(
+    globalSortRecordKey,
+    JSON.stringify({
+      orderBy,
+      reverse,
+    } satisfies SortPreference),
+  )
+}
+
+export const applySortPreference = (path = getCurrentPath()) => {
+  const preference = getSortPreference(path)
+  if (!preference) return
+  sortObjs(preference.orderBy, preference.reverse)
 }
 
 const [_layout, _setLayout] = createSignal<LayoutType>(

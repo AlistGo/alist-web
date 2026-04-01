@@ -1,7 +1,7 @@
 import { IconTypes } from "solid-icons"
 import { TiDeleteOutline } from "solid-icons/ti"
 import { CgRename } from "solid-icons/cg"
-import { TbArchive, TbFileArrowRight } from "solid-icons/tb"
+import { TbArchive, TbFileArrowRight, TbSnowflake, TbSun } from "solid-icons/tb"
 import { TbCopy, TbLink } from "solid-icons/tb"
 import { AiTwotoneDelete } from "solid-icons/ai"
 import { CgFileAdd, CgFolderAdd } from "solid-icons/cg"
@@ -23,7 +23,10 @@ export const operations: Operations = {
   move: { icon: TbFileArrowRight, color: "$warning9" },
   delete: { icon: AiTwotoneDelete, color: "$danger9" },
   decompress: { icon: TbArchive, color: "$primary9" },
+  s3_archive: { icon: TbSnowflake, color: "$info9" },
+  s3_restore: { icon: TbSun, color: "$warning9" },
   copy_link: { icon: TbLink, color: "$info9" },
+  share: { icon: TbLink, color: "$accent9" },
   mkdir: { icon: CgFolderAdd, p: true },
   recursive_move: { icon: ImMoveUp, p: true },
   remove_empty_directory: { icon: HiOutlineFolderRemove, p: true },

@@ -2,6 +2,7 @@ import { Markdown } from "~/components"
 import { useTitle } from "~/hooks"
 import { getSetting } from "~/store"
 import { notify } from "~/utils"
+import CreateShareDialog from "~/components/CreateShareDialog"
 import { Body } from "./Body"
 import { Footer } from "./Footer"
 import { Header } from "./header/Header"
@@ -18,6 +19,7 @@ const Index = () => {
       <Header />
       <Toolbar />
       <Body />
+      <CreateShareDialog />
       <Footer />
     </>
   )

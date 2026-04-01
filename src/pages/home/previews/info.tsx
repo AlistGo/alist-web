@@ -1,10 +1,19 @@
-import { Heading, Icon, Image, Text, VStack } from "@hope-ui/solid"
-import { JSXElement } from "solid-js"
+import { Badge, Heading, Icon, Image, Text, VStack } from "@hope-ui/solid"
+import { JSXElement, Show, createMemo } from "solid-js"
+import { useT } from "~/hooks"
 import { getMainColor, objStore } from "~/store"
-import { formatDate, getFileSize } from "~/utils"
+import { formatDate, getFileSize, normalizeStorageClass } from "~/utils"
 import { getIconByObj } from "~/utils/icon"
 
 export const FileInfo = (props: { children: JSXElement }) => {
+  const t = useT()
+  const storageClassKey = createMemo(() =>
+    normalizeStorageClass(objStore.obj.storage_class),
+  )
+  const storageClassLabel = createMemo(() => {
+    const key = storageClassKey()
+    return key ? t(`home.storage_class.${key}`) : undefined
+  })
   return (
     <VStack class="fileinfo" py="$6" spacing="$6">
       <Image
@@ -27,6 +36,16 @@ export const FileInfo = (props: { children: JSXElement }) => {
         >
           {objStore.obj.name}
         </Heading>
+        <Show when={storageClassLabel()}>
+          <Badge
+            variant="subtle"
+            colorScheme="primary"
+            textTransform="none"
+            css={{ "align-self": "flex-start", "font-size": "0.75rem" }}
+          >
+            {t("home.storage_class.label")}: {storageClassLabel()}
+          </Badge>
+        </Show>
         <Text color="$neutral10" size="sm">
           {getFileSize(objStore.obj.size)} · {formatDate(objStore.obj.modified)}
         </Text>

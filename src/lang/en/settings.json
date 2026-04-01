@@ -126,6 +126,8 @@
   "sso_oidc_username_key": "Sso oidc username key",
   "sso_organization_name": "Sso organization name",
   "text_types": "Text types",
+  "thumbnail_size": "Thumbnail size",
+  "thumbnail_size-tips": "Thumbnail width in pixels. Height is scaled proportionally.",
   "token": "Token",
   "transmission_seedtime": "Transmission seedtime",
   "transmission_uri": "Transmission uri",

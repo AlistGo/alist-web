@@ -1,8 +1,13 @@
 import { password } from "~/store"
-import { EmptyResp } from "~/types"
+import { Resp, TaskInfo } from "~/types"
 import { r } from "~/utils"
 import { SetUpload, Upload } from "./types"
 import { calculateHash } from "./util"
+
+type UploadResp = Resp<{
+  task?: TaskInfo
+}>
+
 export const FormUpload: Upload = async (
   uploadPath: string,
   file: File,
@@ -10,7 +15,7 @@ export const FormUpload: Upload = async (
   asTask = false,
   overwrite = false,
   rapid = false,
-): Promise<Error | undefined> => {
+) => {
   let oldTimestamp = new Date().valueOf()
   let oldLoaded = 0
   const form = new FormData()
@@ -29,7 +34,7 @@ export const FormUpload: Upload = async (
     headers["X-File-Sha1"] = sha1
     headers["X-File-Sha256"] = sha256
   }
-  const resp: EmptyResp = await r.put("/fs/form", form, {
+  const resp: UploadResp = await r.put("/fs/form", form, {
     headers: headers,
     onUploadProgress: (progressEvent) => {
       if (progressEvent.total) {
@@ -58,8 +63,12 @@ export const FormUpload: Upload = async (
     },
   })
   if (resp.code === 200) {
-    return
+    return {
+      task: resp.data?.task,
+    }
   } else {
-    return new Error(resp.message)
+    return {
+      error: new Error(resp.message),
+    }
   }
 }
