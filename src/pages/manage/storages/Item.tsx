@@ -53,6 +53,8 @@ export type ItemProps = DriverItem & {
       }
   )
 
+const maxLocalUploadChunkSizeMB = 4096
+
 const Item = (props: ItemProps) => {
   const t = useT()
   const isFolderPathField =
@@ -63,6 +65,10 @@ const Item = (props: ItemProps) => {
     props.type === Type.Number &&
     props.driver === "Chunker" &&
     props.name === "chunk_size"
+  const isLocalUploadChunkSizeField =
+    props.type === Type.Number &&
+    props.driver === "Local" &&
+    props.name === "upload_chunk_size_mb"
   const isChunkerRemotePathsField =
     props.type === Type.Text &&
     props.driver === "Chunker" &&
@@ -149,10 +155,26 @@ const Item = (props: ItemProps) => {
                 type="number"
                 id={props.name}
                 readOnly={props.readonly}
+                min={isLocalUploadChunkSizeField ? 0 : undefined}
+                max={
+                  isLocalUploadChunkSizeField
+                    ? maxLocalUploadChunkSizeMB
+                    : undefined
+                }
+                step={isLocalUploadChunkSizeField ? 1 : undefined}
                 value={props.value as number}
                 onInput={
                   props.type === Type.Number
-                    ? (e) => props.onChange?.(parseInt(e.currentTarget.value))
+                    ? (e) => {
+                        let nextValue = Number.parseInt(
+                          e.currentTarget.value,
+                          10,
+                        )
+                        if (!Number.isFinite(nextValue)) {
+                          nextValue = 0
+                        }
+                        props.onChange?.(nextValue)
+                      }
                     : undefined
                 }
               />
@@ -292,6 +314,14 @@ const Item = (props: ItemProps) => {
               ? `storages.common.${props.name}-tips`
               : `drivers.${props.driver}.${props.name}-tips`,
           )}
+        </FormHelperText>
+      </Show>
+      <Show when={isLocalUploadChunkSizeField}>
+        <FormHelperText>
+          {t("storages.local_upload_chunk_size_range", {
+            min: "0",
+            max: String(maxLocalUploadChunkSizeMB),
+          })}
         </FormHelperText>
       </Show>
       <Show when={isChunkSizeField}>
