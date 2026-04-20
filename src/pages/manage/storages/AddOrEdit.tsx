@@ -43,6 +43,8 @@ function GetDefaultValue(type: Type, value?: string) {
 
 type Drivers = Record<string, DriverInfo>
 
+const maxLocalUploadChunkSizeMB = 4096
+
 const AddOrEdit = () => {
   const t = useT()
   const { params, back, to } = useRouter()
@@ -88,6 +90,31 @@ const AddOrEdit = () => {
     setStorage("addition", JSON.stringify(addition))
     return r.post(`/admin/storage/${id ? "update" : "create"}`, storage)
   })
+  const validateLocalUploadChunkSize = () => {
+    if (storage.driver !== "Local") {
+      return true
+    }
+    const raw = addition.upload_chunk_size_mb
+    if (raw === undefined || raw === null || raw === "") {
+      return true
+    }
+    const valueStr = String(raw).trim()
+    if (!/^-?\d+$/.test(valueStr)) {
+      notify.error(t("storages.local_upload_chunk_size_invalid"))
+      return false
+    }
+    const value = Number.parseInt(valueStr, 10)
+    if (value < 0 || value > maxLocalUploadChunkSizeMB) {
+      notify.error(
+        t("storages.local_upload_chunk_size_range", {
+          min: "0",
+          max: String(maxLocalUploadChunkSizeMB),
+        }),
+      )
+      return false
+    }
+    return true
+  }
   const alert = createMemo(() => {
     const raw = drivers()[storage.driver]?.config.alert?.trim()
     if (!raw) return
@@ -193,6 +220,9 @@ const AddOrEdit = () => {
         mt="$2"
         loading={okLoading()}
         onClick={async () => {
+          if (!validateLocalUploadChunkSize()) {
+            return
+          }
           if (drivers()[storage.driver].config.need_ms) {
             notify.info(t("manage.add_storage-tips"))
             window.open(joinBase("/@manage/messenger"), "_blank")

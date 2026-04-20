@@ -816,6 +816,8 @@
     "thumb_pixel-tips": "Specifies the target width for image thumbnails in pixels. The height of the thumbnail will be calculated automatically to maintain the original aspect ratio of the image.",
     "thumbnail": "Thumbnail",
     "thumbnail-tips": "enable thumbnail",
+    "upload_chunk_size_mb": "Upload chunk size",
+    "upload_chunk_size_mb-tips": "chunk size in MB for web uploads, range 0-4096, 0 disables chunk upload",
     "use_ffmpeg": "Use ffmpeg",
     "use_ffmpeg-tips": "use ffmpeg to generate thumbnail",
     "video_thumb_pos": "Video thumb pos",
