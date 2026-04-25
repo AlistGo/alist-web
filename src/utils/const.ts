@@ -1,6 +1,10 @@
 import { useColorModeValue } from "@hope-ui/solid"
 
-export const hoverColor = () => "rgba(132,133,141,0.18)"
+export const hoverColor = () => "rgba(132, 133, 141, 0.18)"
+
+export const selectedColor = () => "rgba(0, 122, 255, 0.15)"
+
+export const separatorColor = () => "rgba(0, 0, 0, 0.1)"
 
 export const alphaColor = (level: number, reverse = false) => {
   if (reverse) {
