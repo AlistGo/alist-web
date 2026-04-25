@@ -154,12 +154,15 @@ export const Center = () => {
           >
             <HStack
               p="$2"
-              bgColor={useColorModeValue("white", "#000000d0")()}
+              bgColor={useColorModeValue(
+                "rgba(255, 255, 255, 0.92)",
+                "rgba(0, 0, 0, 0.82)",
+              )()}
               spacing="$1"
-              shadow="0px 10px 30px -5px rgba(0, 0, 0, 0.3)"
+              shadow="0px 10px 30px -5px rgba(0, 0, 0, 0.2)"
               rounded="$lg"
               css={{
-                backdropFilter: "blur(8px)",
+                backdropFilter: "blur(12px)",
               }}
             >
               <For each={["rename", "move", "copy", "delete", "decompress"]}>
