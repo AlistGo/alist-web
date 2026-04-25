@@ -160,59 +160,6 @@ const theme: HopeThemeConfig = {
           variant: "solid",
         },
       },
-      variants: {
-        solid: {
-          root: {
-            bgColor: "$primary9",
-            color: "white",
-            _hover: {
-              bgColor: "$primary10",
-            },
-            _active: {
-              bgColor: "$primary11",
-            },
-          },
-        },
-        subtle: {
-          root: {
-            bgColor: "transparent",
-            color: "$primary9",
-            _hover: {
-              bgColor: "$primary2",
-            },
-            _active: {
-              bgColor: "$primary3",
-            },
-          },
-        },
-        outline: {
-          root: {
-            bgColor: "transparent",
-            color: "$primary9",
-            border: "1.5px solid",
-            borderColor: "$primary6",
-            _hover: {
-              bgColor: "$primary1",
-              borderColor: "$primary7",
-            },
-            _active: {
-              bgColor: "$primary2",
-            },
-          },
-        },
-        ghost: {
-          root: {
-            bgColor: "transparent",
-            color: "$neutral12",
-            _hover: {
-              bgColor: "$neutral4",
-            },
-            _active: {
-              bgColor: "$neutral5",
-            },
-          },
-        },
-      },
     },
     IconButton: {
       baseStyle: {
@@ -359,27 +306,6 @@ const theme: HopeThemeConfig = {
         },
       },
     },
-    Switch: {
-      baseStyle: {
-        track: {
-          rounded: "full",
-          bgColor: "$neutral5",
-          _checked: {
-            bgColor: "$primary9",
-          },
-        },
-        thumb: {
-          rounded: "full",
-          bgColor: "white",
-          shadow: "rgba(0, 0, 0, 0.15) 0px 1px 3px",
-        },
-      },
-      defaultProps: {
-        root: {
-          colorScheme: "primary",
-        },
-      },
-    },
     Menu: {
       baseStyle: {
         content: {
@@ -399,15 +325,6 @@ const theme: HopeThemeConfig = {
           _hover: {
             bgColor: "$neutral4",
           },
-        },
-        groupTitle: {
-          px: "$3",
-          py: "$1",
-          fontSize: "$xs",
-          fontWeight: 600,
-          textTransform: "uppercase",
-          letterSpacing: "0.05em",
-          color: "$neutral10",
         },
       },
     },
@@ -503,18 +420,6 @@ const theme: HopeThemeConfig = {
         },
       },
     },
-    Tooltip: {
-      baseStyle: {
-        content: {
-          rounded: "8px",
-          bgColor: "$neutral12",
-          color: "white",
-          fontSize: "$sm",
-          py: "$1_5",
-          px: "$2",
-        },
-      },
-    },
     Badge: {
       baseStyle: {
         root: {
@@ -530,60 +435,6 @@ const theme: HopeThemeConfig = {
         root: {
           rounded: "8px",
           fontSize: "$sm",
-        },
-      },
-    },
-    Card: {
-      baseStyle: {
-        root: {
-          rounded: "16px",
-          border: "none",
-          shadow:
-            "rgba(0, 0, 0, 0.04) 0px 1px 3px, rgba(0, 0, 0, 0.06) 0px 1px 2px",
-          bgColor: "$background",
-        },
-        header: {
-          pb: "$3",
-        },
-        body: {
-          py: "$3",
-        },
-        footer: {
-          pt: "$3",
-        },
-      },
-    },
-    Table: {
-      baseStyle: {
-        table: {
-          borderCollapse: "collapse",
-          w: "$full",
-        },
-        thead: {
-          th: {
-            fontWeight: 600,
-            fontSize: "$sm",
-            color: "$neutral11",
-            textTransform: "none",
-            letterSpacing: "normal",
-            borderBottom: "1px solid",
-            borderColor: "$neutral5",
-          },
-        },
-        tbody: {
-          tr: {
-            borderBottom: "1px solid",
-            borderColor: "$neutral4",
-            _last: {
-              borderBottom: "none",
-            },
-            _hover: {
-              bgColor: "$neutral3",
-            },
-          },
-          td: {
-            py: "$3",
-          },
         },
       },
     },
