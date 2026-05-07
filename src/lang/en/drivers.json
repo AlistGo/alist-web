@@ -712,7 +712,14 @@
     "device_id": "Device id",
     "device_id-tips": "Optional custom device id (32 hex chars), auto-generated when empty",
     "order_by": "Order by",
-    "order_by-tips": "0:name,1:size,2:create_time,3:update_time",
+    "order_by-tips": "Sort field used by the file list",
+    "order_bys": {
+      "0": "Name",
+      "1": "Size",
+      "2": "Created time",
+      "3": "Updated time",
+      "4": "File type"
+    },
     "page_size": "Page size",
     "phone_number": "Phone number",
     "phone_number-tips": "Phone number for SMS login, e.g. +86 13800000000",
@@ -721,8 +728,12 @@
     "root_folder_id": "Root folder id",
     "send_code": "Send code",
     "send_code-tips": "Set true and save to send SMS code, it auto-resets to false after sending",
-    "sort_type": "Sort type",
-    "sort_type-tips": "0:asc,1:desc",
+    "sort_type": "Order direction",
+    "sort_type-tips": "Sort direction used by the file list",
+    "sort_types": {
+      "0": "Ascending",
+      "1": "Descending"
+    },
     "verification_id": "Verification id",
     "verification_id-tips": "Auto-generated after sending SMS code; do not edit manually",
     "verify_code": "Verify code",
