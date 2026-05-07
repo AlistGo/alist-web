@@ -90,7 +90,7 @@ export const Obj = () => {
               title={t("home.input_password")}
               password={password}
               setPassword={setPassword}
-              enterCallback={() => refresh(true)}
+              enterCallback={() => refresh(true, false)}
             >
               <Text>{t("global.have_account")}</Text>
               <Text
