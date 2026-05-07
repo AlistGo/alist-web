@@ -292,7 +292,7 @@ export const setSortPreference = (
     JSON.stringify({
       orderBy,
       reverse,
-    } satisfies SortPreference),
+    } as SortPreference),
   )
 }
 
