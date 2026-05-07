@@ -6,6 +6,7 @@ import { Obj, StoreObj } from "~/types"
 import { bus, log, trimBase } from "~/utils"
 import { keyPressed } from "./key-event"
 import { local } from "./local_settings"
+import { getSettingBool } from "./settings"
 
 export enum State {
   Initial, // Initial state
@@ -204,6 +205,7 @@ const layoutRecord: Record<string, LayoutType> = (() => {
   }
 })()
 type SortPreference = { orderBy: OrderBy; reverse: boolean }
+const activeSortRecord: Record<string, SortPreference> = {}
 const sortRecord: Record<string, SortPreference> = (() => {
   try {
     return JSON.parse(localStorage.getItem("sortRecord") || "{}")
@@ -212,6 +214,8 @@ const sortRecord: Record<string, SortPreference> = (() => {
   }
 })()
 const globalSortRecordKey = "globalSortPreference"
+const isFrontendRememberSortEnabled = () =>
+  getSettingBool("frontend_remember_sort")
 const getGlobalSortPreference = (): SortPreference | undefined => {
   try {
     const preference = JSON.parse(
@@ -249,11 +253,19 @@ export const getSortPreference = (
   path = getCurrentPath(),
 ): { orderBy: OrderBy; reverse: boolean } | undefined => {
   const normalizedPath = normalizeSortPath(path)
-  const preference = sortRecord[normalizedPath]
+  const preference = activeSortRecord[normalizedPath]
   if (preference && isValidOrderBy(preference.orderBy)) {
     return {
       orderBy: preference.orderBy,
       reverse: !!preference.reverse,
+    }
+  }
+  if (!isFrontendRememberSortEnabled()) return undefined
+  const storedPreference = sortRecord[normalizedPath]
+  if (storedPreference && isValidOrderBy(storedPreference.orderBy)) {
+    return {
+      orderBy: storedPreference.orderBy,
+      reverse: !!storedPreference.reverse,
     }
   }
   return getGlobalSortPreference()
@@ -265,6 +277,11 @@ export const setSortPreference = (
   path = getCurrentPath(),
 ) => {
   const normalizedPath = normalizeSortPath(path)
+  activeSortRecord[normalizedPath] = {
+    orderBy,
+    reverse,
+  }
+  if (!isFrontendRememberSortEnabled()) return
   sortRecord[normalizedPath] = {
     orderBy,
     reverse,

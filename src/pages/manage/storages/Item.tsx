@@ -146,6 +146,34 @@ const Item = (props: ItemProps) => {
             }
           />
         </Match>
+        <Match when={props.type === Type.Number && props.options}>
+          <Select
+            id={props.name}
+            readOnly={props.readonly}
+            defaultValue={String(props.value)}
+            onChange={
+              props.type === Type.Number
+                ? (value) => {
+                    const parsed = parseInt(value, 10)
+                    props.onChange?.(Number.isNaN(parsed) ? 0 : parsed)
+                  }
+                : undefined
+            }
+          >
+            <SelectOptions
+              readonly={props.readonly}
+              options={props.options.split(",").map((key) => ({
+                key,
+                label: t(
+                  (props.options_prefix ??
+                    (props.driver === "common"
+                      ? `storages.common.${props.name}s`
+                      : `drivers.${props.driver}.${props.name}s`)) + `.${key}`,
+                ),
+              }))}
+            />
+          </Select>
+        </Match>
         <Match when={props.type === Type.Number}>
           <Show
             when={isChunkSizeField}
