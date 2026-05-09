@@ -960,6 +960,22 @@
     "root_folder_id": "Root folder id",
     "username": "Username"
   },
+  "pCloud": {
+    "access_token": "Access token",
+    "access_token-tips": "OAuth token from pCloud authorization",
+    "hostname": "API Region",
+    "hostname-tips": "Select pCloud server region (US or EU)",
+    "hostnames": {
+      "us": "US Region (api.pcloud.com)",
+      "eu": "EU Region (eapi.pcloud.com)"
+    },
+    "root_folder_id": "Root folder id",
+    "root_folder_id-tips": "Get folder ID from URL like https://my.pcloud.com/#/filemanager?folder=12345678901 (leave empty for root folder)",
+    "client_id": "Client id",
+    "client_id-tips": "Custom OAuth client ID (optional)",
+    "client_secret": "Client secret",
+    "client_secret-tips": "Custom OAuth client secret (optional)"
+  },
   "PikPakShare": {
     "device_id": "Device id",
     "platform": "Platform",
@@ -1534,6 +1550,7 @@
     "OnedriveAPP": {},
     "PikPak": {},
     "PikPakShare": {},
+    "pCloud": {},
     "ProtonDrive": {},
     "Quark": {},
     "QuarkTV": {},
@@ -1633,6 +1650,7 @@
     "OnedriveAPP": "OnedriveAPP",
     "PikPak": "PikPak",
     "PikPakShare": "PikPakShare",
+    "pCloud": "pCloud",
     "ProtonDrive": "ProtonDrive",
     "Quark": "Quark",
     "QuarkTV": "QuarkTV",
