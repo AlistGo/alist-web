@@ -6,10 +6,16 @@ import { objStore } from "~/store"
 import { Download } from "../previews/download"
 import { OpenWith } from "./open-with"
 import { getPreviews } from "../previews"
+import { useT } from "~/hooks"
 
 const File = () => {
+  const t = useT()
   const previews = createMemo(() => {
-    return getPreviews({ ...objStore.obj, provider: objStore.provider })
+    return getPreviews({
+      ...objStore.obj,
+      provider: objStore.provider,
+      web_proxy: objStore.web_proxy,
+    })
   })
   const [cur, setCur] = createSignal(previews()[0])
   return (
@@ -22,7 +28,10 @@ const File = () => {
             onChange={(name) => {
               setCur(previews().find((p) => p.name === name)!)
             }}
-            options={previews().map((item) => ({ value: item.name }))}
+            options={previews().map((item) => ({
+              value: item.name,
+              label: item.i18nKey ? t(item.i18nKey) : item.name,
+            }))}
           />
           <OpenWith />
         </HStack>

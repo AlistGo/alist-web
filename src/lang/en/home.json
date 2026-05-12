@@ -49,7 +49,42 @@
     "tr-install": "TrollStore",
     "tr-installing": "TrollStore Installing",
     "open_in_new_window": "Open in new window",
-    "auto_next": "Auto next"
+    "auto_next": "Auto next",
+    "lark_preview": "Lark Preview",
+    "lark_tools": {
+      "title": "Lark Tools",
+      "unsupported_current": "Lark export is not supported for this file.",
+      "unsupported_title": "Export is not supported",
+      "unsupported_description": "The first version supports exporting Lark Docs to PDF/DOCX, and Sheets/Bitable to XLSX.",
+      "loading_options": "Loading export options",
+      "option_failed": "Failed to load export options",
+      "create_export_task": "Create export task",
+      "download_export": "Download {{name}}",
+      "download_name": "Output file: {{name}}",
+      "download_started": "The exported file download has started.",
+      "download_failed": "Failed to download the exported file.",
+      "export_failed": "Lark export task failed.",
+      "export_timeout": "Export timed out. Please try again later.",
+      "feishu_error_detail": "Feishu error detail",
+      "copy_error_detail": "Copy detail",
+      "sub_resource": "Sheet/Table",
+      "sub_resource_required": "Please select a sheet or table before exporting CSV.",
+      "sub_resource_error": "Failed to load sheets or tables",
+      "no_sub_resources": "No sheet or table available",
+      "type": {
+        "doc": "Lark Docs",
+        "docx": "Lark Docs",
+        "sheet": "Lark Sheets",
+        "bitable": "Lark Bitable"
+      },
+      "status": {
+        "success_title": "Export completed",
+        "failed_title": "Export failed",
+        "processing_title": "Exporting",
+        "success_description": "The exported file is ready to download.",
+        "processing_description": "Waiting for Lark to finish the export task."
+      }
+    }
   },
   "layouts": {
     "list": "List View",

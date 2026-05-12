@@ -539,6 +539,7 @@ const ShareFile = () => {
               }}
               options={previews().map((preview) => ({
                 value: preview.name,
+                label: preview.i18nKey ? t(preview.i18nKey) : preview.name,
               }))}
             />
             <OpenWith />

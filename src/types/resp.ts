@@ -42,6 +42,7 @@ export type FsGetResp = Resp<
     readme: string
     header: string
     provider: string
+    web_proxy?: boolean
     related: Obj[]
   }
 >
