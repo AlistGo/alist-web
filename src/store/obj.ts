@@ -30,6 +30,7 @@ const [objStore, setObjStore] = createStore<{
   readme: string
   header: string
   provider: string
+  web_proxy: boolean
   // pageIndex: number;
   // pageSize: number;
   state: State
@@ -45,6 +46,7 @@ const [objStore, setObjStore] = createStore<{
   readme: "",
   header: "",
   provider: "",
+  web_proxy: false,
   // pageIndex: 1,
   // pageSize: 50,
   state: State.Initial,
@@ -71,6 +73,9 @@ export const ObjStore = {
   },
   setProvider: (provider: string) => {
     setObjStore("provider", provider)
+  },
+  setWebProxy: (web_proxy: boolean) => {
+    setObjStore("web_proxy", web_proxy)
   },
   setObjs: setObjs,
   setTotal: (total: number) => {

@@ -288,6 +288,7 @@ export const usePath = () => {
       (data) => {
         ObjStore.setObj(data)
         ObjStore.setProvider(data.provider)
+        ObjStore.setWebProxy(Boolean(data.web_proxy))
         if (data.is_dir) {
           setPathAs(path)
           handleFolder(path, index, size)

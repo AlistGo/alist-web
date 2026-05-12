@@ -36,16 +36,52 @@ const isPrior = (p: Prior): boolean => {
 
 export interface Preview {
   name: string
+  i18nKey?: string
   type?: ObjType
   exts?: Ext
   provider?: RegExp
+  enabled?: (file: PreviewFile) => boolean
   component: Component
   prior: Prior
 }
 
-export type PreviewComponent = Pick<Preview, "name" | "component">
+export type PreviewComponent = Pick<Preview, "name" | "i18nKey" | "component">
+type PreviewFile = Obj & {
+  provider: string
+  download_url?: string
+  web_proxy?: boolean
+}
+
+const larkCloudDocExts = [
+  "lark-doc",
+  "lark-docx",
+  "lark-sheet",
+  "lark-bitable",
+  "lark-mindnote",
+  "lark-slides",
+]
+
+const isLarkCloudDoc = (name: string) =>
+  larkCloudDocExts.includes(ext(name).toLowerCase())
 
 const previews: Preview[] = [
+  {
+    name: "Lark Preview",
+    i18nKey: "home.preview.lark_preview",
+    exts: "*",
+    provider: /^Lark$/,
+    enabled: (file) => !file.web_proxy || isLarkCloudDoc(file.name),
+    component: lazy(() => import("./lark")),
+    prior: true,
+  },
+  {
+    name: "Lark Tools",
+    i18nKey: "home.preview.lark_tools.title",
+    exts: ["lark-doc", "lark-docx", "lark-sheet", "lark-bitable"],
+    provider: /^Lark$/,
+    component: lazy(() => import("./lark_tools")),
+    prior: true,
+  },
   {
     name: "HTML render",
     exts: ["html"],
@@ -160,9 +196,7 @@ const previews: Preview[] = [
   },
 ]
 
-export const getPreviews = (
-  file: Obj & { provider: string; download_url?: string },
-): PreviewComponent[] => {
+export const getPreviews = (file: PreviewFile): PreviewComponent[] => {
   const { pathname, searchParams } = useRouter()
   const typeOverride =
     ObjType[searchParams["type"]?.toUpperCase() as keyof typeof ObjType]
@@ -177,12 +211,19 @@ export const getPreviews = (
     if (preview.provider && !preview.provider.test(file.provider)) {
       return
     }
+    if (preview.enabled && !preview.enabled(file)) {
+      return
+    }
     if (
       preview.type === file.type ||
       (typeOverride && preview.type === typeOverride) ||
       extsContains(preview.exts, file.name)
     ) {
-      const r = { name: preview.name, component: preview.component }
+      const r = {
+        name: preview.name,
+        i18nKey: preview.i18nKey,
+        component: preview.component,
+      }
       if (isPrior(preview.prior)) {
         res.push(r)
       } else {
@@ -202,6 +243,7 @@ export const getPreviews = (
   if (!isShareRoute || file.download_url) {
     res.push({
       name: "Download",
+      i18nKey: "home.preview.download",
       component: lazy(() => import("./download")),
     })
   }
