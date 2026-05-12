@@ -41,6 +41,9 @@ export const Obj = () => {
       : undefined
   })
   const perPage = createMemo(() => {
+    if (pagination.type === "all") {
+      return -1
+    }
     return pagination.type === "pagination"
       ? parseInt(searchParams["per_page"], 10) || pagination.size
       : undefined

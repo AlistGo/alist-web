@@ -708,10 +708,16 @@ const SharePage = () => {
   const currentToken = createMemo(() => shareToken())
   const pagination = getPagination()
   const currentPage = createMemo(() => {
+    if (pagination.type === "all") {
+      return 1
+    }
     const value = parseInt(searchParams["page"], 10)
     return Number.isFinite(value) && value > 0 ? value : 1
   })
   const currentPerPage = createMemo(() => {
+    if (pagination.type === "all") {
+      return -1
+    }
     const value = parseInt(searchParams["per_page"], 10)
     if (Number.isFinite(value) && value > 0) {
       return Math.min(MAX_PAGE_SIZE, value)
@@ -1307,7 +1313,8 @@ const SharePage = () => {
                   objStore.state === State.Folder &&
                   !nodeLoading() &&
                   !infoLoading() &&
-                  !nodeError()
+                  !nodeError() &&
+                  pagination.type !== "all"
                 }
               >
                 <SharePager

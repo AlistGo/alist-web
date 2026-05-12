@@ -98,8 +98,7 @@ export const getPagination = (): {
     Math.max(1, getSettingNumber("default_page_size", DEFAULT_PAGE_SIZE)),
   )
   return {
-    // `all` would trigger very large payloads; fallback to pagination.
-    type: rawType === "all" ? "pagination" : rawType,
+    type: rawType,
     size,
   }
 }
