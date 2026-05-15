@@ -86,6 +86,8 @@
   "max_index_depth-tips": "max depth of index",
   "max_server_download_speed": "Max server download speed",
   "max_server_upload_speed": "Max server upload speed",
+  "meta_not_found_cache_expire": "Meta not found cache expire",
+  "meta_not_found_cache_expire-tips": "Negative cache expiration for missing meta records, in seconds. Set 0 to disable.",
   "ocr_api": "Ocr api",
   "offline_download_task_threads_num": "Offline download task threads num",
   "offline_download_transfer_task_threads_num": "Offline download transfer task threads num",
