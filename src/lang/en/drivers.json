@@ -712,14 +712,7 @@
     "device_id": "Device id",
     "device_id-tips": "Optional custom device id (32 hex chars), auto-generated when empty",
     "order_by": "Order by",
-    "order_by-tips": "Sort field used by the file list",
-    "order_bys": {
-      "0": "Name",
-      "1": "Size",
-      "2": "Created time",
-      "3": "Updated time",
-      "4": "File type"
-    },
+    "order_by-tips": "0:name,1:size,2:create_time,3:update_time",
     "page_size": "Page size",
     "phone_number": "Phone number",
     "phone_number-tips": "Phone number for SMS login, e.g. +86 13800000000",
@@ -728,12 +721,8 @@
     "root_folder_id": "Root folder id",
     "send_code": "Send code",
     "send_code-tips": "Set true and save to send SMS code, it auto-resets to false after sending",
-    "sort_type": "Order direction",
-    "sort_type-tips": "Sort direction used by the file list",
-    "sort_types": {
-      "0": "Ascending",
-      "1": "Descending"
-    },
+    "sort_type": "Sort type",
+    "sort_type-tips": "0:asc,1:desc",
     "verification_id": "Verification id",
     "verification_id-tips": "Auto-generated after sending SMS code; do not edit manually",
     "verify_code": "Verify code",
@@ -800,9 +789,17 @@
     "app_secret-tips": "app secret",
     "external_mode": "External mode",
     "external_mode-tips": "external mode",
+    "refresh_token": "Refresh token",
+    "refresh_token-tips": "optional refresh token for user access token auto refresh",
+    "refresh_token_expires_at": "Refresh token expires at",
+    "refresh_token_expires_at-tips": "refresh token expires at unix timestamp",
     "root_folder_path": "Root folder path",
     "tenant_url_prefix": "Tenant url prefix",
-    "tenant_url_prefix-tips": "tenant url prefix"
+    "tenant_url_prefix-tips": "tenant url prefix",
+    "user_access_token": "User access token",
+    "user_access_token-tips": "optional cached user access token for personal drive access",
+    "user_access_token_expires_at": "User access token expires at",
+    "user_access_token_expires_at-tips": "user access token expires at unix timestamp"
   },
   "LenovoNasShare": {
     "host": "Host",
