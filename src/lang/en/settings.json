@@ -27,6 +27,8 @@
   "filename_char_mapping": "Filename char mapping",
   "filter_readme_scripts": "Filter readme scripts",
   "forward_direct_link_params": "Forward direct link params",
+  "frontend_remember_sort": "Frontend remember sort",
+  "frontend_remember_sort-tips": "Persist frontend list sorting in the browser. When disabled, backend/driver order is used until the user sorts manually in the current session.",
   "frp_auth_token": "Frp auth token",
   "frp_custom_domain": "Frp custom domain",
   "frp_enabled": "Frp enabled",
