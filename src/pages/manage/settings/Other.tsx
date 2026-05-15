@@ -26,6 +26,7 @@ const OtherSettings = () => {
   const [pan115TempDir, set115TempDir] = createSignal("")
   const [pikpakTempDir, setPikPakTempDir] = createSignal("")
   const [thunderTempDir, setThunderTempDir] = createSignal("")
+  const [guangYaPanTempDir, setGuangYaPanTempDir] = createSignal("")
   const [token, setToken] = createSignal("")
   const [settings, setSettings] = createSignal<SettingItem[]>([])
   const [settingsLoading, settingsData] = useFetch(
@@ -68,6 +69,12 @@ const OtherSettings = () => {
         temp_dir: thunderTempDir(),
       }),
   )
+  const [setGuangYaPanLoading, setGuangYaPan] = useFetch(
+    (): PResp<string> =>
+      r.post("/admin/setting/set_guangyapan", {
+        temp_dir: guangYaPanTempDir(),
+      }),
+  )
   const [setTokenLoading, setTokenRequest] = useFetch(
     (): PResp<string> => r.post("/admin/setting/set_token", { token: token() }),
   )
@@ -93,6 +100,9 @@ const OtherSettings = () => {
       )
       setThunderTempDir(
         data.find((i) => i.key === "thunder_temp_dir")?.value || "",
+      )
+      setGuangYaPanTempDir(
+        data.find((i) => i.key === "guangyapan_temp_dir")?.value || "",
       )
       setSettings(data)
     })
@@ -248,6 +258,29 @@ const OtherSettings = () => {
         }}
       >
         {t("settings_other.set_thunder")}
+      </Button>
+      <Heading my="$2">{t("settings_other.guangyapan")}</Heading>
+      <FormControl w="$full" display="flex" flexDirection="column">
+        <FormLabel for="guangyapan_temp_dir" display="flex" alignItems="center">
+          {t(`settings.guangyapan_temp_dir`)}
+        </FormLabel>
+        <FolderChooseInput
+          id="guangyapan_temp_dir"
+          value={guangYaPanTempDir()}
+          onChange={(path) => setGuangYaPanTempDir(path)}
+        />
+      </FormControl>
+      <Button
+        my="$2"
+        loading={setGuangYaPanLoading()}
+        onClick={async () => {
+          const resp = await setGuangYaPan()
+          handleResp(resp, (data) => {
+            notify.success(data)
+          })
+        }}
+      >
+        {t("settings_other.set_guangyapan")}
       </Button>
       <Heading my="$2">{t("settings.token")}</Heading>
       <Input
