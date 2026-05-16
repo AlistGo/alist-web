@@ -71,6 +71,9 @@ export const usePath = () => {
   }
 
   const clampPerPage = (size?: number) => {
+    if (pagination.type === "all") {
+      return -1
+    }
     const querySize = perPageFromQuery()
     const raw =
       typeof size === "number" && Number.isFinite(size)
