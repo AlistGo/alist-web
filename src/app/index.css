@@ -1,17 +1,19 @@
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-corner,
 ::-webkit-scrollbar-track {
-  background-color: #e2e2e2;
-  border-radius: 2px;
+  background-color: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  border-radius: 2px;
-  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-button:vertical {
@@ -19,32 +21,91 @@
 }
 
 ::-webkit-scrollbar-thumb:vertical:hover {
-  background-color: rgba(0, 0, 0, 0.35);
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 ::-webkit-scrollbar-thumb:vertical:active {
-  background-color: rgba(0, 0, 0, 0.38);
+  background-color: rgba(0, 0, 0, 0.4);
 }
 
 /* dark */
 
 .hope-ui-dark ::-webkit-scrollbar-corner,
 .hope-ui-dark ::-webkit-scrollbar-track {
-  background-color: rgb(15, 15, 15);
+  background-color: transparent;
 }
 
 .hope-ui-dark ::-webkit-scrollbar-thumb {
-  background-color: #2d2d2d;
+  background-color: rgba(255, 255, 255, 0.2);
+  border: 2px solid transparent;
+  background-clip: padding-box;
 }
 
 .hope-ui-dark ::-webkit-scrollbar-thumb:vertical:hover {
-  background-color: rgb(58, 58, 58);
+  background-color: rgba(255, 255, 255, 0.3);
 }
 
 .hope-ui-dark ::-webkit-scrollbar-thumb:vertical:active {
-  background-color: rgb(58, 58, 58);
+  background-color: rgba(255, 255, 255, 0.4);
 }
 
 .hope-select__option {
   flex-shrink: 0;
+}
+
+/* Apple-style focus ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(0, 122, 255, 0.3);
+}
+
+/* Smooth transitions for interactive elements */
+button,
+[role="button"],
+a,
+input,
+select,
+textarea {
+  transition: all 0.15s ease-in-out;
+}
+
+/* Subtle hover effects for cards and list items */
+.card-hover:hover,
+.list-item-hover:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    rgba(0, 0, 0, 0.08) 0px 4px 12px,
+    rgba(0, 0, 0, 0.04) 0px 1px 2px;
+}
+
+/* Apple-style press effect */
+button:active,
+[role="button"]:active {
+  transform: scale(0.98);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Selection color matching Apple's blue */
+::selection {
+  background-color: rgba(0, 122, 255, 0.2);
+}
+
+/* Disable text selection for non-interactive elements */
+.no-select {
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Subtle divider style */
+.divider {
+  height: 1px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.hope-ui-dark .divider {
+  background-color: rgba(255, 255, 255, 0.1);
 }
