@@ -3,6 +3,7 @@ import { local, password, selectedObjs as _selectedObjs } from "~/store"
 import { fsList, notify, pathBase, pathJoin } from "~/utils"
 import { getLinkByDirAndObj, useRouter, useT } from "~/hooks"
 import { useSelectedLink } from "~/hooks"
+import { getPagination } from "~/store/settings"
 import { Obj } from "~/types"
 
 interface File {
@@ -69,24 +70,35 @@ export const useDownload = () => {
             },
           ]
         } else {
-          const resp = await fsList(
-            pathJoin(pathname(), pre, obj.name),
-            password(),
-          )
-          if (resp.code !== 200) {
-            return resp.message
-          }
           const res: File[] = []
-          for (const _obj of resp.data.content ?? []) {
-            const _res = await fetchFolderStructure(
-              pathJoin(pre, obj.name),
-              _obj,
+          let page = 1
+          const perPage = getPagination().size
+          while (true) {
+            const resp = await fsList(
+              pathJoin(pathname(), pre, obj.name),
+              password(),
+              page,
+              perPage,
             )
-            if (typeof _res === "string") {
-              return _res
-            } else {
-              res.push(..._res)
+            if (resp.code !== 200) {
+              return resp.message
             }
+            const content = resp.data.content ?? []
+            for (const _obj of content) {
+              const _res = await fetchFolderStructure(
+                pathJoin(pre, obj.name),
+                _obj,
+              )
+              if (typeof _res === "string") {
+                return _res
+              } else {
+                res.push(..._res)
+              }
+            }
+            if (content.length < perPage) {
+              break
+            }
+            page++
           }
           return res
         }
