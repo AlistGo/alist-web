@@ -9,11 +9,13 @@ import {
   useColorModeValue,
   VStack,
 } from "@hope-ui/solid"
+import { Show } from "solid-js"
 import { useFetch, useRouter, useT } from "~/hooks"
 import { getMainColor } from "~/store"
 import { PEmptyResp, Storage } from "~/types"
 import { handleResp, handleRespWithNotifySuccess, notify, r } from "~/utils"
 import { DeletePopover } from "../common/DeletePopover"
+import { StrmGenerateButton } from "./StrmGenerate"
 
 interface StorageProps {
   storage: Storage
@@ -66,6 +68,9 @@ function StorageOp(props: StorageProps) {
           })
         }}
       />
+      <Show when={props.storage.driver === "Strm"}>
+        <StrmGenerateButton path={props.storage.mount_path} />
+      </Show>
     </>
   )
 }

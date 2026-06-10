@@ -24,7 +24,7 @@ import { Component, lazy } from "solid-js"
 import { joinBase } from "~/utils"
 import { Group, UserRole } from "~/types"
 import { FaSolidBook, FaSolidDatabase } from "solid-icons/fa"
-import { TbArchive, TbDevices2 } from "solid-icons/tb"
+import { TbArchive, TbDevices2, TbFileExport } from "solid-icons/tb"
 import { TbLink } from "solid-icons/tb"
 import { FaSolidUserGear } from "solid-icons/fa"
 import { BiRegularMessageAltDetail } from "solid-icons/bi"
@@ -179,6 +179,13 @@ export const side_menu_items: SideMenuItem[] = [
         to: "/@manage/tasks/copy",
         role: UserRole.GENERAL,
         component: lazy(() => import("./tasks/Copy")),
+      },
+      {
+        title: "manage.sidemenu.strm_generate",
+        icon: TbFileExport,
+        to: "/@manage/tasks/strm_generate",
+        role: UserRole.ADMIN,
+        component: lazy(() => import("./tasks/StrmGenerate")),
       },
       {
         title: "manage.sidemenu.decompress",

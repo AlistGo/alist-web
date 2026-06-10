@@ -13,6 +13,7 @@ import { usePath } from "~/hooks"
 import { Motion } from "@motionone/solid"
 import { isTocVisible, setTocDisabled } from "~/components"
 import { BiSolidBookContent } from "solid-icons/bi"
+import { ToolbarStrmGenerate } from "./StrmGenerate"
 
 export const Right = () => {
   const { isOpen, onToggle } = createDisclosure({
@@ -122,6 +123,7 @@ export const Right = () => {
                 }}
               />
             </Show>
+            <ToolbarStrmGenerate />
             <Show when={isTocVisible()}>
               <RightIcon
                 as={BiSolidBookContent}

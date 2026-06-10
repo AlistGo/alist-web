@@ -158,6 +158,7 @@
     "new_file": "New File",
     "input_filename": "Input filename",
     "cancel_select": "Cancel Select",
+    "generate_strm": "Generate Strm",
     "offline_download": "Offline download",
     "offline_download-tips": "One URL per line",
     "delete_policy": {

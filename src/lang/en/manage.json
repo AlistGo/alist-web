@@ -26,6 +26,7 @@
     "permissions_config": "Config",
     "upload": "Upload",
     "copy": "Copy",
+    "strm_generate": "Strm Generate",
     "decompress": "Decompress",
     "s3_transition": "S3 Transition",
     "backup-restore": "Backup & Restore",

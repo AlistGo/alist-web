@@ -3,6 +3,7 @@
   "offline_download_transfer": "Transfer downloaded file to corresponding storage",
   "upload": "Upload file to corresponding storage",
   "copy": "Copy file from a storage to another storage",
+  "strm_generate": "Generate local .strm files for a Strm storage",
   "decompress": "Download and decompress an archive file",
   "decompress_upload": "Upload extracted file into target storage",
   "s3_transition": "Archive and restore S3 objects",
@@ -43,6 +44,9 @@
       "dst": "Destination Path"
     },
     "upload": {
+      "path": "Path"
+    },
+    "strm_generate": {
       "path": "Path"
     },
     "offline_download": {
