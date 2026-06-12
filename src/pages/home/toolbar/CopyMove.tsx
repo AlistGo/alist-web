@@ -12,10 +12,12 @@ export const Copy = () => {
   const { pathname } = useRouter()
   const { refresh } = usePath()
   const [overwrite, setOverwrite] = createSignal(false)
+  const [skipExisting, setSkipExisting] = createSignal(false)
   const handler = (name: string) => {
     if (name === "copy") {
       onOpen()
       setOverwrite(false)
+      setSkipExisting(false)
     }
   }
   bus.on("tool", handler)
@@ -29,15 +31,29 @@ export const Copy = () => {
       onClose={onClose}
       loading={loading()}
       footerSlot={
-        <Checkbox
-          mr="auto"
-          checked={overwrite()}
-          onChange={() => {
-            setOverwrite(!overwrite())
-          }}
-        >
-          {t("home.conflict_policy.overwrite_existing")}
-        </Checkbox>
+        <>
+          <Checkbox
+            disabled={skipExisting()}
+            checked={overwrite()}
+            onChange={() => {
+              setOverwrite(!overwrite())
+            }}
+          >
+            {t("home.conflict_policy.overwrite_existing")}
+          </Checkbox>
+          <Checkbox
+            mr="auto"
+            checked={skipExisting()}
+            onChange={() => {
+              setSkipExisting(!skipExisting())
+              if (skipExisting()) {
+                setOverwrite(false)
+              }
+            }}
+          >
+            {t("home.conflict_policy.skip_existing")}
+          </Checkbox>
+        </>
       }
       onSubmit={async (dst) => {
         const resp = await ok(
@@ -45,6 +61,7 @@ export const Copy = () => {
           dst,
           selectedObjs().map((obj) => obj.name),
           overwrite(),
+          skipExisting(),
         )
         handleRespWithNotifySuccess(resp, () => {
           refresh()

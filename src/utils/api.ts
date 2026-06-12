@@ -116,8 +116,15 @@ export const fsCopy = (
   dst_dir: string,
   names: string[],
   overwrite: boolean,
+  skip_existing?: boolean,
 ): PEmptyResp => {
-  return r.post("/fs/copy", { src_dir, dst_dir, names, overwrite })
+  return r.post("/fs/copy", {
+    src_dir,
+    dst_dir,
+    names,
+    overwrite,
+    skip_existing,
+  })
 }
 
 export const fsRemove = (dir: string, names: string[]): PEmptyResp => {
