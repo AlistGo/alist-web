@@ -28,6 +28,7 @@ import {
   handleResp,
   hashPwd,
   joinBase,
+  separatorColor,
 } from "~/utils"
 import { PResp, Resp } from "~/types"
 import LoginBg from "./LoginBg"
@@ -429,9 +430,9 @@ const Login = () => {
                       cursor="pointer"
                       _hover={{
                         textDecoration: "underline",
-                        color: "#2B5CD9",
+                        color: "$primary10",
                       }}
-                      color="#3573FF"
+                      color="$primary9"
                     >
                       {t("login.go_login")}
                     </Text>
@@ -489,15 +490,7 @@ const Login = () => {
               </Button>
               {/* 注册切换 */}
               <Show when={!isRegisterMode() && allowRegister()}>
-                <Button
-                  w="$full"
-                  bgColor={useColorModeValue("#FFE9FB", "#491D42")()}
-                  color="#ED73D7"
-                  onClick={toggleRegisterMode}
-                  _hover={{
-                    backgroundColor: "rgba(237, 115, 215, 0.25)",
-                  }}
-                >
+                <Button w="$full" variant="subtle" onClick={toggleRegisterMode}>
                   {t("login.register")}
                 </Button>
               </Show>
@@ -536,13 +529,13 @@ const Login = () => {
             spacing="$4"
           >
             <Flex alignItems="center" justifyContent="center">
-              <Heading color="#3573FF" fontSize="18px">
+              <Heading color="$primary9" fontSize="$lg" fontWeight={600}>
                 {isRegisterMode()
                   ? t("login.register")
                   : t("login.password_login")}
               </Heading>
             </Flex>
-            <Divider borderColor="#E9E9E9" />
+            <Divider borderColor={separatorColor()} />
             <Show
               when={!needOpt()}
               fallback={
@@ -668,18 +661,9 @@ const Login = () => {
                 w="$full"
                 loading={loading() || registerLoading()}
                 onClick={Login}
-                bgColor="#3573FF"
-                color="white"
-                _hover={{
-                  backgroundColor: "#2B5CD9",
-                }}
-                _active={{
-                  backgroundColor: "#1E40AF",
-                }}
                 h="45px"
-                fontSize="16px"
-                fontWeight="bold"
-                borderRadius="12px"
+                fontSize="$md"
+                fontWeight={600}
                 mt="$2"
               >
                 {isRegisterMode() ? t("login.register") : t("login.login")}
@@ -692,13 +676,13 @@ const Login = () => {
               >
                 <Show when={allowRegister()}>
                   <Text
-                    color="#3573FF"
-                    fontSize="14px"
+                    color="$primary9"
+                    fontSize="$sm"
                     cursor="pointer"
                     onClick={toggleRegisterMode}
                     _hover={{
                       textDecoration: "underline",
-                      color: "#2B5CD9",
+                      color: "$primary10",
                     }}
                   >
                     {isRegisterMode()
@@ -717,12 +701,12 @@ const Login = () => {
                       true,
                     )
                   }}
-                  color="#3573FF"
-                  fontSize="14px"
+                  color="$primary9"
+                  fontSize="$sm"
                   cursor="pointer"
                   _hover={{
                     textDecoration: "underline",
-                    color: "#2B5CD9",
+                    color: "$primary10",
                   }}
                 >
                   {t("login.use_guest")}
