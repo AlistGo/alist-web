@@ -45,5 +45,7 @@
     "filter_by_driver": "Filter by driver",
     "table_layout": "Table layout"
   },
+  "local_upload_chunk_size_invalid": "Upload chunk size must be an integer in MB.",
+  "local_upload_chunk_size_range": "Upload chunk size must be between {{min}} and {{max}} MB.",
   "no_storage_content": "failed get storage: storage not found; please add a storage first"
 }
