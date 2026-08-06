@@ -28,6 +28,7 @@ import { File2Upload, traverseFileTree } from "./util"
 import { SelectWrapper } from "~/components"
 import { getUploads } from "./uploads"
 import { TaskState } from "~/pages/manage/tasks/Task"
+import { uploadWithChunkPolicy } from "./chunk"
 
 enum TaskStateEnum {
   Pending,
@@ -77,19 +78,9 @@ const UploadFile = (props: UploadFileProps) => {
         <Text>{getFileSize(props.speed)}/s</Text>
       </HStack>
       <Show when={props.task_id}>
-        <HStack spacing="$2" flexWrap="wrap">
-          <Badge colorScheme="accent">{props.task_id}</Badge>
-          <Button
-            size="xs"
-            variant="subtle"
-            as="a"
-            href={joinBase("/@manage/tasks/upload")}
-            target="_blank"
-            rel="noreferrer"
-          >
-            {t("home.upload.open_task_center")}
-          </Button>
-        </HStack>
+        <Badge colorScheme="accent">
+          {t("home.upload.task_id", { id: props.task_id! })}
+        </Badge>
       </Show>
       <Progress
         w="$full"
@@ -130,8 +121,8 @@ const Upload = () => {
   }
   const hasBackgroundTask = () =>
     uploadFiles.uploads.some(({ task_id }) => !!task_id)
-  let fileInput: HTMLInputElement
-  let folderInput: HTMLInputElement
+  let fileInput!: HTMLInputElement
+  let folderInput!: HTMLInputElement
   const clearTaskPoller = (path: string) => {
     const timer = taskPollers.get(path)
     if (timer !== undefined) {
@@ -205,7 +196,7 @@ const Upload = () => {
     setUpload(path, "status", "uploading")
     const uploadPath = pathJoin(pathname(), path)
     try {
-      const result = await curUploader().upload(
+      const result = await uploadWithChunkPolicy(
         uploadPath,
         file,
         (key, value) => {
@@ -214,6 +205,7 @@ const Upload = () => {
         asTask(),
         overwrite(),
         rapid(),
+        curUploader().upload,
       )
       if (result.error) {
         setUpload(path, "status", "error")
